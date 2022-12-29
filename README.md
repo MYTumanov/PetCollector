@@ -2,8 +2,12 @@
 
 **JAVA**: 17
 
+**Запуск**
 ```
+cd ./pet-collector-server
 mvn install
+docker build --pull --rm -f "Dockerfile" -t petcollector:latest . 
+docker compose -f "docker-compose.yml" up -d --build
 ```
 
 ```
