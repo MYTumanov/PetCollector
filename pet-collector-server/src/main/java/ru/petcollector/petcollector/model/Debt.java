@@ -7,7 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,13 +22,20 @@ public class Debt {
 
     @Id
     @NotNull
-    private ObjectId id = new ObjectId();
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String id = new ObjectId().toHexString();
 
     @NotNull
-    private ObjectId ownerId;
+    @Version
+    private Integer version;
 
     @NotNull
-    private ObjectId debtorId;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String ownerId;
+
+    @NotNull
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String debtorId;
 
     @NotNull
     @CreatedDate
