@@ -12,8 +12,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 @Configuration
-@PropertySource("classpath:application.properties")
 @EnableMongoAuditing
+@PropertySource("classpath:application.properties")
 @EnableMongoRepositories(basePackages = "ru.petcollector.petcollector.repository")
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
