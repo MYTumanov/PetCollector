@@ -2,11 +2,14 @@ package ru.petcollector.petcollector.component;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
+
 import ru.petcollector.petcollector.model.Debt;
 import ru.petcollector.petcollector.model.User;
 import ru.petcollector.petcollector.repository.DebtRepository;
 import ru.petcollector.petcollector.repository.UserRepository;
 
+@Component
 public class Bootstrap {
 
     @NotNull
