@@ -27,7 +27,7 @@ public class User {
 
     @Id
     @NotNull
-    private String id = new ObjectId().toHexString();
+    private ObjectId id = new ObjectId();
 
     @NotNull
     @CreatedDate
@@ -54,12 +54,12 @@ public class User {
 
     @NotNull
     @ReadOnlyProperty
-    @DocumentReference(lookup = "{'deptorId':?#{#id} }")
+    @DocumentReference(lookup = "{'debtorId':?#{#self._id} }")
     private List<Debt> reqDebts;
 
     @NotNull
     @ReadOnlyProperty
-    @DocumentReference(lookup = "{'ownerId':?#{#id} }")
+    @DocumentReference(lookup = "{'ownerId':?#{#self._id} }")
     private List<Debt> ownDebts;
     
 }

@@ -20,13 +20,13 @@ public class Debt {
 
     @Id
     @NotNull
-    private String id = new ObjectId().toHexString();
+    private ObjectId id = new ObjectId();
 
     @NotNull
-    private String ownerId;
+    private ObjectId ownerId;
 
     @NotNull
-    private String debtorId;
+    private ObjectId debtorId;
 
     @NotNull
     @CreatedDate

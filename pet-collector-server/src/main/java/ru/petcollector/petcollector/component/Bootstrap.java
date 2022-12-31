@@ -42,29 +42,24 @@ public class Bootstrap {
         user3.setMidleName("Test");
         user3.setLogin("test");
 
-        // @NotNull
-        // final Debt debt1 = new Debt();
-        // debt1.setOwnerId(user3.getId());
-        // debt1.setDebtorId(user2.getId());
-        // debt1.setSum(421f);
+        @NotNull
+        final Debt debt1 = new Debt();
+        debt1.setOwnerId(user3.getId());
+        debt1.setDebtorId(user2.getId());
+        debt1.setSum(421f);
 
-        // @NotNull
-        // final Debt debt2 = new Debt();
-        // debt2.setOwnerId(user3.getId());
-        // debt2.setDebtorId(user1.getId());
-        // debt2.setSum(12.3f);
-
-        // user3.getOwnDebts().add(debt1);
-        // user3.getOwnDebts().add(debt2);
-        // user2.getReqDebts().add(debt1);
-        // user1.getReqDebts().add(debt2);
+        @NotNull
+        final Debt debt2 = new Debt();
+        debt2.setOwnerId(user3.getId());
+        debt2.setDebtorId(user1.getId());
+        debt2.setSum(12.3f);
 
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
 
-        // debtRepository.save(debt1);
-        // debtRepository.save(debt2);
+        debtRepository.save(debt1);
+        debtRepository.save(debt2);
     }
 
     public void run() {
