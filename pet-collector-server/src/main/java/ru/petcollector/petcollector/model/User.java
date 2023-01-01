@@ -1,10 +1,13 @@
 package ru.petcollector.petcollector.model;
 
-import org.bson.types.ObjectId;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,11 +16,7 @@ import lombok.Setter;
 @Setter
 @Document("users")
 @NoArgsConstructor
-public class User {
-
-    @Id
-    @NotNull
-    private String id = new ObjectId().toHexString();
+public class User extends AbstractModel {
 
     @NotNull
     private String lastName;
@@ -27,5 +26,22 @@ public class User {
 
     @NotNull
     private String midleName;
-    
+
+    @NotNull
+    @Indexed(unique = true)
+    private String login;
+
+    @Nullable
+    private String password;
+
+    @NotNull
+    @ReadOnlyProperty
+    @DocumentReference(lookup = "{'debtorId':?#{#self._id} }")
+    private List<Debt> reqDebts;
+
+    @NotNull
+    @ReadOnlyProperty
+    @DocumentReference(lookup = "{'ownerId':?#{#self._id} }")
+    private List<Debt> ownDebts;
+
 }

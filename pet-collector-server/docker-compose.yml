@@ -15,7 +15,11 @@ services:
   pet-collector-server:
     image: petcollector:latest
     ports:
-      - "8080:8080"
+      - "8080:8081"
     container_name: pet-collector-server
     depends_on:
       - pet-collector-mongo
+    environment:
+      - spring.data.mongodb.host=mongodb
+      - spring.data.mongodb.port=27017
+      - spring.data.mongodb.database=pet_collector
