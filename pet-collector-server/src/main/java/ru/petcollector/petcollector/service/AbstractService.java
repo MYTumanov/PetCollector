@@ -14,7 +14,7 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
 
     @NotNull
     @Autowired
-    private R repository;
+    protected R repository;
 
     @Nullable
     public M findById(@NotNull final String id) {
@@ -26,8 +26,23 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
         return userOpt.get();
     }
 
+    @Nullable
     public List<M> findAll() {
         return repository.findAll();
+    }
+
+    @NotNull
+    public M merge(@NotNull final M model) {
+        return repository.save(model);
+    }
+
+    @NotNull
+    public List<M> createAll(@NotNull final List<M> models) {
+        return repository.saveAll(models);
+    }
+
+    public long getSize() {
+        return repository.count();
     }
 
 }
