@@ -48,5 +48,5 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     protected String getDatabaseName() {
         return database;
     }
-    
+
 }

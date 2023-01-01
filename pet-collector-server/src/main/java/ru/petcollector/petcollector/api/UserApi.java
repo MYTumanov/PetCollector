@@ -31,5 +31,5 @@ public class UserApi {
         System.out.println("GET all");
         return service.findAll();
     }
-    
+
 }

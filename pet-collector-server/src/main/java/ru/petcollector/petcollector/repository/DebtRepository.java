@@ -6,5 +6,5 @@ import ru.petcollector.petcollector.model.Debt;
 
 @Repository
 public interface DebtRepository extends AbstractRepository<Debt> {
-    
+
 }

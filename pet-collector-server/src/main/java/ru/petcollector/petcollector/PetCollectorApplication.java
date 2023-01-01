@@ -11,8 +11,10 @@ import ru.petcollector.petcollector.component.Bootstrap;
 public class PetCollectorApplication {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context =  SpringApplication.run(PetCollectorApplication.class, args);
-		@NotNull final Bootstrap bootstrap = new Bootstrap(context);
+		@NotNull
+		ConfigurableApplicationContext context = SpringApplication.run(PetCollectorApplication.class, args);
+		@NotNull
+		final Bootstrap bootstrap = new Bootstrap(context);
 		bootstrap.run();
 	}
 

@@ -34,5 +34,5 @@ public abstract class AbstractModel {
     @NotNull
     @LastModifiedDate
     private Date lastUpdate;
-    
+
 }

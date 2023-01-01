@@ -18,9 +18,10 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
 
     @Nullable
     public M findById(@NotNull final String id) {
-        @NotNull Optional<M> userOpt = repository.findById(id);
+        @NotNull
+        Optional<M> userOpt = repository.findById(id);
         if (!userOpt.isPresent()) {
-            return null; 
+            return null;
         }
         return userOpt.get();
     }
@@ -28,5 +29,5 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
     public List<M> findAll() {
         return repository.findAll();
     }
-    
+
 }
