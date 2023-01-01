@@ -19,11 +19,11 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
     @Nullable
     public M findById(@NotNull final String id) {
         @NotNull
-        Optional<M> userOpt = repository.findById(id);
-        if (!userOpt.isPresent()) {
+        Optional<M> modelOpt = repository.findById(id);
+        if (!modelOpt.isPresent()) {
             return null;
         }
-        return userOpt.get();
+        return modelOpt.get();
     }
 
     @Nullable
@@ -32,13 +32,25 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
     }
 
     @NotNull
-    public M merge(@NotNull final M model) {
+    public M merge(@NotNull final M model) throws IllegalArgumentException {
         return repository.save(model);
     }
 
     @NotNull
-    public List<M> createAll(@NotNull final List<M> models) {
+    public List<M> createAll(@NotNull final List<M> models) throws IllegalArgumentException {
         return repository.saveAll(models);
+    }
+
+    public void deleteById(@Nullable final String id) throws IllegalArgumentException {
+        if (id == null)
+            throw new IllegalArgumentException("id is null");
+        @NotNull
+        Optional<M> modelOpt = repository.findById(id);
+        if (!modelOpt.isPresent()) {
+            throw new IllegalArgumentException("Entity not found by id: " + id);
+        }
+        modelOpt.stream().forEach(m -> m.setDeleted(true));
+        repository.save(modelOpt.get());
     }
 
     public long getSize() {

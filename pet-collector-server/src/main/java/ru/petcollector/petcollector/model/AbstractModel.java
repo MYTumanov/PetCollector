@@ -35,4 +35,6 @@ public abstract class AbstractModel {
     @LastModifiedDate
     private Date lastUpdate;
 
+    private boolean isDeleted = false;
+
 }

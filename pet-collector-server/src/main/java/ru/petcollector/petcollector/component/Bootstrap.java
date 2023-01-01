@@ -23,7 +23,7 @@ public class Bootstrap {
         this.debtRepository = applicationContext.getBean(DebtRepository.class);
     }
 
-    private void initData() {
+    public void initData() {
         @NotNull
         final User user1 = new User();
         user1.setFirsName("Админ");
@@ -65,15 +65,9 @@ public class Bootstrap {
         debtRepository.save(debt2);
     }
 
-    public void run() {
-        try {
-            System.out.println("***Initialise data***");
-            initData();
-            System.out.println("***Initialise success***");
-        } catch (@NotNull final Exception e) {
-            System.out.println("***ERROR***");
-            System.out.println(e);
-        }
+    public void cleanRepository() {
+        userRepository.deleteAll();
+        debtRepository.deleteAll();
     }
 
 }
