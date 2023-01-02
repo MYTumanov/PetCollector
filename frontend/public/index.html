@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Pet collector</title>
+</head>
+
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script>
+        async function ready() {
+            const root = document.getElementById("root");
+            // Не работает
+            const url = 'http://localhost:8080/api/user/63b2c4a14387a05e06f33869';
+            // Работает
+            // const url = 'https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits';
+            try {
+                const response = await fetch(url);
+                const json = await response.json();
+                root.innerText = JSON.stringify(json);
+            } catch (e) {
+                console.log(e);
+                root.innerText = e;
+            }
+        }
+        document.addEventListener("DOMContentLoaded", ready);
+    </script>
+</body>
+
+</html>
