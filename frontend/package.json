@@ -1,0 +1,9 @@
+{
+  "name": "petcollector",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/PetCollector/PetCollector",
+  "author": "https://github.com/PetCollector/PetCollector/graphs/contributors",
+  "license": "MIT",
+  "devDependencies": {}
+}
