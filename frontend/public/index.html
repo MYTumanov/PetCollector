@@ -14,9 +14,7 @@
         async function ready() {
             const root = document.getElementById("root");
             // Не работает
-            const url = 'http://localhost:8080/api/user/63b2c4a14387a05e06f33869';
-            // Работает
-            // const url = 'https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits';
+            const url = 'http://localhost:8080/api/user';
             try {
                 const response = await fetch(url);
                 const json = await response.json();
