@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
 let mode = "development";
 if (process.env.NODE_ENV === "production") {
@@ -13,6 +14,10 @@ const plugins = [
   }),
 ];
 
+if (process.env.SERVE) {
+  plugins.push(new ReactRefreshWebpackPlugin());
+}
+
 module.exports = {
   mode,
   plugins,
@@ -22,7 +27,7 @@ module.exports = {
     hot: true,
   },
 
-  entry: "./src/index.js",
+  entry: "./src/index.jsx",
 
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -33,7 +38,7 @@ module.exports = {
     rules: [
       { test: /\.(html)$/, use: ["html-loader"] },
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",

@@ -10,22 +10,6 @@
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <script>
-        async function ready() {
-            const root = document.getElementById("root");
-            // Не работает
-            const url = 'http://localhost:8080/api/user';
-            try {
-                const response = await fetch(url);
-                const json = await response.json();
-                root.innerText = JSON.stringify(json);
-            } catch (e) {
-                console.log(e);
-                root.innerText = e;
-            }
-        }
-        document.addEventListener("DOMContentLoaded", ready);
-    </script>
 </body>
 
 </html>
