@@ -8,3 +8,6 @@ build-container:
 
 run-container:
 	cd ./pet-collector-server && docker compose -f "docker-compose.yml" up -d --build
+
+run-front-dev-server:
+	cd ./frontend && npm start
