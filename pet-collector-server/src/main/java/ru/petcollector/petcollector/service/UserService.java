@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
+import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
+import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.model.User;
 import ru.petcollector.petcollector.repository.UserRepository;
 
@@ -23,13 +25,13 @@ public class UserService extends AbstractService<User, UserRepository> {
         return repository.findByLogin(login);
     }
 
-    public void deleteByLogin(@Nullable final String login) throws IllegalArgumentException {
+    public void deleteByLogin(@Nullable final String login) throws AbstractPetCollectorException, IllegalArgumentException {
         if (login == null)
             throw new IllegalArgumentException("login is null");
         @NotNull
         User user = repository.findByLogin(login);
         if (user == null) {
-            throw new IllegalArgumentException("Entity not found by login: " + login);
+            throw new EntityNotFoundException("Entity not found by login: " + login);
         }
         user.setDeleted(true);
         repository.save(user);
