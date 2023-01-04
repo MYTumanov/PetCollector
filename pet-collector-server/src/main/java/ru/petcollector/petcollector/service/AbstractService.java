@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
+import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.model.AbstractModel;
 import ru.petcollector.petcollector.repository.AbstractRepository;
 
@@ -14,19 +16,57 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
 
     @NotNull
     @Autowired
-    private R repository;
+    protected R repository;
 
     @Nullable
-    public M findById(@NotNull final String id) {
-        @NotNull Optional<M> userOpt = repository.findById(id);
-        if (!userOpt.isPresent()) {
-            return null; 
+    public M findById(@NotNull final String id) throws AbstractPetCollectorException {
+        @NotNull
+        Optional<M> modelOpt = repository.findById(id);
+        if (!modelOpt.isPresent()) {
+            throw new EntityNotFoundException("Entity is not found by id: " + id);
         }
-        return userOpt.get();
+        return modelOpt.get();
     }
 
+    @Nullable
     public List<M> findAll() {
         return repository.findAll();
     }
-    
+
+    @NotNull
+    public M create(@NotNull final M model) throws IllegalArgumentException {
+        return repository.save(model);
+    }
+
+    @NotNull
+    public List<M> createAll(@NotNull final List<M> models) throws IllegalArgumentException {
+        return repository.saveAll(models);
+    }
+
+    public void deleteById(@Nullable final String id) throws AbstractPetCollectorException, IllegalArgumentException {
+        if (id == null)
+            throw new IllegalArgumentException("id is null");
+        @NotNull
+        Optional<M> modelOpt = repository.findById(id);
+        if (!modelOpt.isPresent()) {
+            throw new EntityNotFoundException("Entity not found by id: " + id);
+        }
+        repository.delete(modelOpt.get());
+    }
+
+    public long getSize() {
+        return repository.count();
+    }
+
+    @NotNull
+    public M update(@NotNull final M model) throws AbstractPetCollectorException {
+        @Nullable
+        final M updatedModel = findById(model.getId());
+        if (updatedModel == null) {
+            throw new EntityNotFoundException("Entity is not found with id: " + model.getId());
+        }
+        updatedModel.mapEntity(model);
+        return repository.save(updatedModel);
+    }
+
 }
