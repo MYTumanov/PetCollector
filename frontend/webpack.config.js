@@ -20,6 +20,9 @@ if (process.env.SERVE) {
 
 module.exports = {
   mode,
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"],
+  },
   plugins,
   devtool: "source-map",
 
@@ -27,7 +30,7 @@ module.exports = {
     hot: true,
   },
 
-  entry: "./src/index.jsx",
+  entry: "./src/index.tsx",
 
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -46,6 +49,11 @@ module.exports = {
             cacheDirectory: true,
           },
         },
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: ["ts-loader"],
       },
     ],
   },
