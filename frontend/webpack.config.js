@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 let mode = "development";
 if (process.env.NODE_ENV === "production") {
@@ -12,6 +13,7 @@ const plugins = [
   new HtmlWebpackPlugin({
     template: "./public/index.html",
   }),
+  new MiniCssExtractPlugin(),
 ];
 
 if (process.env.SERVE) {
@@ -54,6 +56,10 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: ["ts-loader"],
+      },
+      {
+        test: /\.(css)$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
       },
     ],
   },
