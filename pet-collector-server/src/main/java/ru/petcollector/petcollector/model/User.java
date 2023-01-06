@@ -27,7 +27,7 @@ public class User extends AbstractModel {
     @NotNull
     private String firstName;
 
-    @NotNull
+    @Nullable
     private String midleName;
 
     @NotNull
