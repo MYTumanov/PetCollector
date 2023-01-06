@@ -1,0 +1,54 @@
+@protocol = http
+@hostname = localhost
+@port = 8080
+@host = {{protocol}}://{{hostname}}:{{port}}
+
+### return list of users
+
+GET {{host}}/api/user
+
+### return user with id
+
+GET {{host}}/api/user/123
+
+### create new user
+
+POST {{host}}/api/user
+Content-Type: application/json
+
+{
+    "lastName": "Derevyankin",
+    "firsName": "Denis",
+    "midleName": "Sergeevich",
+    "login": "derevyankindenis"
+}
+
+###
+
+POST {{host}}/api/user
+Content-Type: application/json
+
+{
+    "lastName": "Tumanov",
+    "firsName": "Maksim",
+    "login": "tumanovmaksim"
+}
+
+### update user
+
+PUT {{host}}/api/user
+Content-Type: application/json
+
+{
+    "id": "63b845849d18c300961bd21f",
+    "lastName": "Derevyankin2",
+    "firsName": "Denis",
+    "midleName": "Sergeevich",
+    "login": "derevyankindenis",
+    "password": "424242"
+}
+
+### Delete user
+
+DELETE {{host}}/api/user/63b856c39d18c300961bd241
+
