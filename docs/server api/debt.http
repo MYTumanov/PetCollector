@@ -1,0 +1,38 @@
+@protocol = http
+@hostname = localhost
+@port = 8080
+@host = {{protocol}}://{{hostname}}:{{port}}
+
+### return list of debts
+GET {{host}}/api/user
+
+### return debt with id
+GET {{host}}/api/user/123
+
+### create new debt
+POST {{host}}/api/debt
+Content-Type: application/json
+
+{
+    "ownerId": "63b859569d18c300961bd247",
+    "debtorId": "63b859589d18c300961bd248",
+    "sum": 300
+}
+
+### update debt
+
+PUT {{host}}/api/debt
+Content-Type: application/json
+
+{
+    "id": "63b845849d18c300961bd21f",
+    "lastName": "Derevyankin2",
+    "firsName": "Denis",
+    "midleName": "Sergeevich",
+    "login": "derevyankindenis",
+    "password": "424242"
+}
+
+### delete debt with id
+
+DELETE  {{host}}/api/debt/63b84ade9d18c300961bd226
