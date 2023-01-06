@@ -4,10 +4,10 @@
 @host = {{protocol}}://{{hostname}}:{{port}}
 
 ### return list of debts
-GET {{host}}/api/user
+GET {{host}}/api/debt
 
 ### return debt with id
-GET {{host}}/api/user/123
+GET {{host}}/api/debt/63b859bf9d18c300961bd24b
 
 ### create new debt
 POST {{host}}/api/debt
@@ -25,14 +25,12 @@ PUT {{host}}/api/debt
 Content-Type: application/json
 
 {
-    "id": "63b845849d18c300961bd21f",
-    "lastName": "Derevyankin2",
-    "firsName": "Denis",
-    "midleName": "Sergeevich",
-    "login": "derevyankindenis",
-    "password": "424242"
+    "id": "63b859bf9d18c300961bd24b",
+    "ownerId": "63b859569d18c300961bd247",
+    "debtorId": "63b859589d18c300961bd248",
+    "sum": 320.0
 }
 
 ### delete debt with id
 
-DELETE  {{host}}/api/debt/63b84ade9d18c300961bd226
+DELETE  {{host}}/api/debt/63b859bf9d18c300961bd24b
