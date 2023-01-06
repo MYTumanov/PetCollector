@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.model.User;
+import ru.petcollector.petcollector.model.UserDTO;
 import ru.petcollector.petcollector.service.UserService;
 
 @RestController
@@ -51,18 +52,18 @@ public class UserApi {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok(service.create(user));
+            return ResponseEntity.ok(service.create(userDTO));
         } catch (@NotNull final Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok(service.update(user));
+            return ResponseEntity.ok(service.update(userDTO));
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
