@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.model.Debt;
+import ru.petcollector.petcollector.model.DebtDTO;
 import ru.petcollector.petcollector.service.DebtService;
 
 @RestController
@@ -29,7 +30,7 @@ public class DebtApi {
     private DebtService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Debt> getUser(@PathVariable String id) {
+    public ResponseEntity<Debt> getDebt(@PathVariable String id) {
         try {
             @Nullable
             final Debt debt = service.findById(id);
@@ -42,7 +43,7 @@ public class DebtApi {
     }
 
     @GetMapping
-    public ResponseEntity<List<Debt>> getUserList() {
+    public ResponseEntity<List<Debt>> getDebtList() {
         try {
             return ResponseEntity.ok(service.findAll());
         } catch (@NotNull final Exception e) {
@@ -51,18 +52,18 @@ public class DebtApi {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Debt> createUser(@RequestBody Debt debt) {
+    public ResponseEntity<Debt> createDebt(@RequestBody DebtDTO debtDTO) {
         try {
-            return ResponseEntity.ok(service.create(debt));
+            return ResponseEntity.ok(service.create(debtDTO));
         } catch (@NotNull final Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Debt> updateUser(@RequestBody Debt debt) {
+    public ResponseEntity<Debt> updateDebt(@RequestBody DebtDTO debtDTO) {
         try {
-            return ResponseEntity.ok(service.update(debt));
+            return ResponseEntity.ok(service.update(debtDTO));
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
@@ -72,7 +73,7 @@ public class DebtApi {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Debt> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Debt> deleteDebt(@PathVariable String id) {
         try {
             service.deleteById(id);
             return ResponseEntity.ok().build();

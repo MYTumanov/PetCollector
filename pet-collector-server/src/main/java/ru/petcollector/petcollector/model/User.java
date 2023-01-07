@@ -14,8 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
-import ru.petcollector.petcollector.exception.EntityCastException;
 
 @Getter
 @Setter
@@ -23,30 +21,13 @@ import ru.petcollector.petcollector.exception.EntityCastException;
 @NoArgsConstructor
 public class User extends AbstractModel {
 
-    private void mapEntity(@NotNull final User user) {
-        this.firsName = user.firsName;
-        this.lastName = user.lastName;
-        this.midleName = user.midleName;
-        this.login = user.login;
-        this.password = user.password;
-    }
-
-    @Override
-    public <T extends AbstractModel> void mapEntity(@NotNull final T model) throws AbstractPetCollectorException {
-        if (model instanceof User) {
-            mapEntity((User) model);
-        } else {
-            throw new EntityCastException();
-        }  
-    }
-
     @NotNull
     private String lastName;
 
     @NotNull
-    private String firsName;
+    private String firstName;
 
-    @NotNull
+    @Nullable
     private String midleName;
 
     @NotNull

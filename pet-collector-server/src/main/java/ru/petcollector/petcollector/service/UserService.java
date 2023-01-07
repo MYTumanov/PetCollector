@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
+import ru.petcollector.petcollector.map.UserMapper;
 import ru.petcollector.petcollector.model.User;
+import ru.petcollector.petcollector.model.UserDTO;
 import ru.petcollector.petcollector.repository.UserRepository;
 
 @Service
@@ -35,6 +37,21 @@ public class UserService extends AbstractService<User, UserRepository> {
         }
         user.setDeleted(true);
         repository.save(user);
+    }
+
+    @NotNull
+    public User create(@NotNull final UserDTO userDTO) throws IllegalArgumentException {
+        return repository.save(UserMapper.map(userDTO));
+    }
+
+    @NotNull
+    public User update(@NotNull final UserDTO userDTO) throws AbstractPetCollectorException {
+        @Nullable
+        final User user = findById(userDTO.getId());
+        if (user == null) {
+            throw new EntityNotFoundException("Entity is not found with id: " + userDTO.getId());
+        }
+        return repository.save(UserMapper.map(userDTO, user));
     }
 
 }

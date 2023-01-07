@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
 
 @Getter
 @Setter
@@ -43,7 +42,5 @@ public abstract class AbstractModel {
 
     @JsonIgnore
     private boolean isDeleted = false;
-
-    public abstract <T extends AbstractModel> void mapEntity(@NotNull final T model) throws AbstractPetCollectorException;
 
 }

@@ -34,11 +34,6 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
     }
 
     @NotNull
-    public M create(@NotNull final M model) throws IllegalArgumentException {
-        return repository.save(model);
-    }
-
-    @NotNull
     public List<M> createAll(@NotNull final List<M> models) throws IllegalArgumentException {
         return repository.saveAll(models);
     }
@@ -56,17 +51,6 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
 
     public long getSize() {
         return repository.count();
-    }
-
-    @NotNull
-    public M update(@NotNull final M model) throws AbstractPetCollectorException {
-        @Nullable
-        final M updatedModel = findById(model.getId());
-        if (updatedModel == null) {
-            throw new EntityNotFoundException("Entity is not found with id: " + model.getId());
-        }
-        updatedModel.mapEntity(model);
-        return repository.save(updatedModel);
     }
 
 }
