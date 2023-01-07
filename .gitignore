@@ -1,5 +1,5 @@
 ### Backend ###
-pet-collector-server/target/
+*/target/
 
 # Compiled class file
 *.class
