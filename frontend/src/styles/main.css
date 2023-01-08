@@ -1,4 +1,4 @@
-@import "modern-css-reset/dist/reset.css";
+@import 'modern-css-reset/dist/reset.css';
 
 h1 {
   color: red;
