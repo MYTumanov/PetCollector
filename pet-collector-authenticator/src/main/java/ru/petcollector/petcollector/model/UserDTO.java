@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginRequest {
-
+public class UserDTO {
+    
     @NotNull
-    private String login;
+    private String username;
 
     @NotNull
     private String password;
-
+    
 }
