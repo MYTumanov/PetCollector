@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+
+  pet-collector-mongo:
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+    container_name: pet-collector-mongo
+    hostname: mongodb
+    volumes:
+      - /volumes/mongodb:/data/db
+      - /volumes/mongoconfigdb:/data/configdb
+
+  pet-collector-server:
+    image: petcollector-server:latest
+    ports:
+      - "8085:8085"
+    container_name: pet-collector-server
+    hostname: pc-server
+    depends_on:
+      - pet-collector-mongo
+    environment:
+      - spring.data.mongodb.host=mongodb
+      - spring.data.mongodb.port=27017
+      - spring.data.mongodb.database=pet_collector
+
+  pet-collector-authenticator:
+    image: petcollector-authenticator:latest
+    ports:
+      - "8090:8090"
+    container_name: pet-collector-authenticator
+    hostname: pc-auth
+    depends_on:
+      - pet-collector-mongo
+    environment:
+      - spring.data.mongodb.host=mongodb
+      - spring.data.mongodb.port=27017
+      - spring.data.mongodb.database=pet_collector
+
+  krakend:
+    image: devopsfaith/krakend:latest
+    ports:
+      - "8080:8080"
+    container_name: krakend-gateway
+    depends_on:
+      - pet-collector-authenticator
+      - pet-collector-server
