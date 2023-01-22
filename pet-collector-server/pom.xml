@@ -18,9 +18,9 @@
         </developer>
     </developers>
 
-	<groupId>ru.PetCollector</groupId>
-	<artifactId>PetCollector</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>ru.petcollector.petcollector</groupId>
+	<artifactId>pet-collector-server</artifactId>
+	<version>0.0.1</version>
 
 	<name>pet-collector-server</name>
 
