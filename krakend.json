@@ -63,7 +63,7 @@
       "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/api/user",
+          "url_pattern": "/api/user?username={JWT.sub}",
           "encoding": "no-op",
           "sd": "static",
           "method": "GET",

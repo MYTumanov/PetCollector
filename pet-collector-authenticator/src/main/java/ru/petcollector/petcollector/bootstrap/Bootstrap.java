@@ -16,9 +16,6 @@ public class Bootstrap {
     @Autowired
     private RegistredClientRepositoryMongoDB repository;
 
-    private Bootstrap() {
-    }
-
     public void initClient() {
         try {
             @NotNull
