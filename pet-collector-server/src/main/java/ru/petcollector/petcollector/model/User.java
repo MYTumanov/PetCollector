@@ -31,6 +31,9 @@ public class User extends AbstractModel {
     private String midleName;
 
     @NotNull
+    private String phoneNumber;
+
+    @NotNull
     @Indexed(unique = true)
     private String login;
 
@@ -38,14 +41,14 @@ public class User extends AbstractModel {
     @JsonIgnore
     private String password;
 
-    @Nullable
-    @ReadOnlyProperty
-    @DocumentReference(lookup = "{'debtorId':?#{#self._id} }")
-    private List<Debt> reqDebts;
+    // @Nullable
+    // @ReadOnlyProperty
+    // @DocumentReference(lookup = "{'debtorId':?#{#self._id} }")
+    // private List<Debt> reqDebts;
 
-    @Nullable
-    @ReadOnlyProperty
-    @DocumentReference(lookup = "{'ownerId':?#{#self._id} }")
-    private List<Debt> ownDebts;
+    // @Nullable
+    // @ReadOnlyProperty
+    // @DocumentReference(lookup = "{'ownerId':?#{#self._id} }")
+    // private List<Debt> ownDebts;
 
 }
