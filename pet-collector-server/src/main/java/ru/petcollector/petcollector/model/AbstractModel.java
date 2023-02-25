@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
@@ -24,11 +23,6 @@ public abstract class AbstractModel {
     @NotNull
     @Field(targetType = FieldType.OBJECT_ID)
     private String id = new ObjectId().toHexString();
-
-    @NotNull
-    @Version
-    @JsonIgnore
-    private Integer version;
 
     @NotNull
     @CreatedDate

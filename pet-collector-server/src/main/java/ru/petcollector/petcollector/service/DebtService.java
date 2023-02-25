@@ -6,55 +6,89 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
+import ru.petcollector.petcollector.api.service.IDebtService;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
+import ru.petcollector.petcollector.exception.InvalidEntityParamentException;
 import ru.petcollector.petcollector.map.DebtMapper;
-import ru.petcollector.petcollector.model.Debt;
-import ru.petcollector.petcollector.model.DebtDTO;
+import ru.petcollector.petcollector.model.debt.Debt;
+import ru.petcollector.petcollector.model.debt.DebtDTO;
 import ru.petcollector.petcollector.repository.DebtRepository;
 
 @Service
-public class DebtService extends AbstractService<Debt, DebtRepository> {
+public class DebtService extends AbstractService<Debt, DebtRepository> implements IDebtService {
 
-    @Nullable
-    public List<Debt> findByDebtorId(@Nullable final String debtorId) throws IllegalArgumentException {
-        if (debtorId == null)
-            throw new IllegalArgumentException("debtorId is null");
-        return repository.findAllByDebtorId(debtorId);
-    }
-
-    @Nullable
-    public List<Debt> findByOwnerId(@Nullable final String ownerId) throws IllegalArgumentException {
-        if (ownerId == null)
-            throw new IllegalArgumentException("ownerId is null");
-        return repository.findAllByDebtorId(ownerId);
-    }
-
-    public boolean existByDebtorId(@Nullable final String debtorId) throws IllegalArgumentException {
-        if (debtorId == null)
-            throw new IllegalArgumentException("debtorId is null");
-        return repository.existsByDebtorId(debtorId);
-    }
-
-    public boolean existByOwnerId(@Nullable final String ownerId) throws IllegalArgumentException {
-        if (ownerId == null)
-            throw new IllegalArgumentException("ownerId is null");
-        return repository.existsByDebtorId(ownerId);
-    }
-
+    @Override
     @NotNull
-    public Debt create(@NotNull final DebtDTO userDTO) throws IllegalArgumentException {
-        return repository.save(DebtMapper.map(userDTO));
+    public List<Debt> findAllByUserId(@Nullable final String userId) {
+        if (userId == null || userId.isEmpty())
+            throw new IllegalArgumentException();
+        return repository.findAllByDebtorUserId(userId);
     }
 
+    @Override
     @NotNull
-    public Debt update(@NotNull final DebtDTO debtDTO) throws AbstractPetCollectorException {
-        @Nullable
-        final Debt debt = findById(debtDTO.getId());
-        if (debt == null) {
-            throw new EntityNotFoundException("Entity is not found with id: " + debtDTO.getId());
-        }
-        return repository.save(DebtMapper.map(debtDTO, debt));
+    public Debt findByIdAndUserId(@Nullable final String id, @Nullable final String userId)
+            throws EntityNotFoundException {
+        if (userId == null || userId.isEmpty())
+            throw new IllegalArgumentException();
+        if (id == null || id.isEmpty())
+            throw new IllegalArgumentException();
+        return repository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    @NotNull
+    public List<Debt> findAllByUserIdAndStatus(@Nullable final String userId, @Nullable final String... status) {
+        if (userId == null || userId.isEmpty())
+            throw new IllegalArgumentException();
+        if (status == null || status.length == 0)
+            return findAllByUserId(userId);
+        return repository.findAllByUserIdAndStatuses(userId, status);
+    }
+
+    @Override
+    @Nullable
+    public Debt updateByIdAndUserId(
+            @Nullable final DebtDTO debtDTO,
+            @NotNull final String id,
+            @Nullable final String userId) throws EntityNotFoundException, InvalidEntityParamentException {
+        if (userId == null || userId.isEmpty())
+            throw new IllegalArgumentException();
+        if (debtDTO == null)
+            throw new IllegalArgumentException();
+        @NotNull
+        final Debt debt = DebtMapper.map(debtDTO,
+                repository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new));
+        debt.setId(id);
+        debt.setOwnerId(userId);
+        return repository.save(debt);
+    }
+
+    @Override
+    @NotNull
+    public Debt create(@Nullable final DebtDTO debtDTO, @Nullable final String userId)
+            throws InvalidEntityParamentException {
+        if (userId == null || userId.isEmpty())
+            throw new IllegalArgumentException();
+        if (debtDTO == null)
+            throw new IllegalArgumentException();
+        @NotNull
+        final Debt debt = DebtMapper.map(debtDTO, new Debt());
+        debt.setOwnerId(userId);
+        return repository.save(debt);
+    }
+
+    @Override
+    public void deleteByIdAndUserId(@Nullable final String id, @Nullable final String userId)
+            throws EntityNotFoundException {
+        if (userId == null || userId.isEmpty())
+            throw new IllegalArgumentException();
+        if (id == null || id.isEmpty())
+            throw new IllegalArgumentException();
+        @NotNull
+        final Debt debt = repository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new);
+        debt.setDeleted(true);
+        repository.save(debt);
     }
 
 }

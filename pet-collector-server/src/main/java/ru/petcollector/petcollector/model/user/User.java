@@ -1,19 +1,16 @@
-package ru.petcollector.petcollector.model;
-
-import java.util.List;
+package ru.petcollector.petcollector.model.user;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.petcollector.petcollector.model.AbstractModel;
 
 @Getter
 @Setter
@@ -40,15 +37,5 @@ public class User extends AbstractModel {
     @Nullable
     @JsonIgnore
     private String password;
-
-    // @Nullable
-    // @ReadOnlyProperty
-    // @DocumentReference(lookup = "{'debtorId':?#{#self._id} }")
-    // private List<Debt> reqDebts;
-
-    // @Nullable
-    // @ReadOnlyProperty
-    // @DocumentReference(lookup = "{'ownerId':?#{#self._id} }")
-    // private List<Debt> ownDebts;
 
 }
