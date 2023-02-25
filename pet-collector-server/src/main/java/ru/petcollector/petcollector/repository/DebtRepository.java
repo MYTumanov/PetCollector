@@ -1,24 +1,42 @@
 package ru.petcollector.petcollector.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.Aggregation;
 
-import ru.petcollector.petcollector.model.Debt;
+import ru.petcollector.petcollector.enumerated.DebtStatus;
+import ru.petcollector.petcollector.model.debt.Debt;
 
-@Repository
 public interface DebtRepository extends AbstractRepository<Debt> {
 
-    @Nullable
-    public List<Debt> findAllByDebtorId(@NotNull String debtorId);
+        // Find all debts where userId is owner or participant.
+        // Sorted by created desc.
+        @Nullable
+        @Aggregation(pipeline = { "{$match:{$and:[{'debtors.userId':ObjectId('?0')},{'isDeleted':false}]}}",
+                        "{$addFields: { debtors: { $filter: { input: '$debtors', as: 'debtor', cond: { $eq: ['$$debtor.userId', ObjectId('?0')] } } } } }",
+                        "{$unionWith: {coll: 'debts', pipeline: [{$match:{$and:[{'ownerId': ObjectId('?0')},{'isDeleted':false}]}}]}}",
+                        "{$sort : { 'created' : -1 } }" })
+        public List<Debt> findAllByDebtorUserId(@NotNull final String userId);
 
-    @Nullable
-    public List<Debt> findAllByOwnerId(@NotNull String ownerId);
+        // Find debt by id where userId owner or participant.
+        @NotNull
+        @Aggregation(pipeline = {
+                        "{$match:{$and:[{'_id':ObjectId('?0')},{'debtors.userId':ObjectId('?1')},{'isDeleted':false}]}}",
+                        "{$addFields: { debtors: { $filter: { input: '$debtors', as: 'debtor', cond: { $eq: ['$$debtor.userId', ObjectId('?1')]}}}}}",
+                        "{$unionWith: { coll: 'debts', pipeline: [{ $match: {$and:[{'_id':ObjectId('?0')},{'ownerId': ObjectId('?1')}, {'isDeleted':false}]}}]}}" })
+        public Optional<Debt> findByIdAndUserId(@NotNull final String id, @NotNull final String userId);
 
-    public boolean existsByDebtorId(@NotNull String debtorId);
-
-    public boolean existsByOwnerId(@NotNull String ownerId);
-
+        // Find all debts where userId is owner or participants
+        // and statuses are equal to given.
+        // Sorted by created desc.
+        @Nullable
+        @Aggregation(pipeline = {
+                        "{$match:{$and:[{'debtors.userId':ObjectId('?0')}, {'status':{$in:?1}}, {'isDeleted':false}]}}",
+                        "{$addFields: { debtors: { $filter: { input: '$debtors', as: 'debtor', cond: { $eq: ['$$debtor.userId', ObjectId('?0')] } } } } }",
+                        "{$unionWith: { coll: 'debts', pipeline: [{ $match: {$and:[{'ownerId': ObjectId('?0')}, {'status':{$in:?1}}, {'isDeleted':false}]}}]}}",
+                        "{$sort : { 'created' : -1 } }" })
+        public List<Debt> findAllByUserIdAndStatuses(@NotNull final String userId, @NotNull final DebtStatus... statuses);
 }

@@ -7,7 +7,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -40,7 +41,10 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @NotNull
     @Override
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://" + host + ":" + port);
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString("mongodb://" + host + ":" + port))
+                .build();
+        return MongoClients.create(settings);
     }
 
     @NotNull

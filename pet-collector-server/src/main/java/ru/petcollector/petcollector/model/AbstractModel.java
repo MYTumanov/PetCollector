@@ -26,11 +26,6 @@ public abstract class AbstractModel {
     private String id = new ObjectId().toHexString();
 
     @NotNull
-    @Version
-    @JsonIgnore
-    private Integer version;
-
-    @NotNull
     @CreatedDate
     @JsonIgnore
     private Date created;
@@ -42,5 +37,10 @@ public abstract class AbstractModel {
 
     @JsonIgnore
     private boolean isDeleted = false;
+
+    @NotNull
+    @Version
+    @JsonIgnore
+    private String version;
 
 }

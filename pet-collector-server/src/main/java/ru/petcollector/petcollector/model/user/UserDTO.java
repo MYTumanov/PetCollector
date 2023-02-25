@@ -1,4 +1,4 @@
-package ru.petcollector.petcollector.model;
+package ru.petcollector.petcollector.model.user;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -26,5 +26,8 @@ public class UserDTO {
 
     @Nullable
     private String password;
-    
+
+    @Nullable
+    private String phoneNumber;
+
 }

@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
-import ru.petcollector.petcollector.model.User;
-import ru.petcollector.petcollector.model.UserDTO;
+import ru.petcollector.petcollector.model.user.User;
+import ru.petcollector.petcollector.model.user.UserDTO;
 import ru.petcollector.petcollector.service.UserService;
 
 @RestController

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.map.UserMapper;
-import ru.petcollector.petcollector.model.User;
-import ru.petcollector.petcollector.model.UserDTO;
+import ru.petcollector.petcollector.model.user.User;
+import ru.petcollector.petcollector.model.user.UserDTO;
 import ru.petcollector.petcollector.repository.UserRepository;
 
 @Service
@@ -27,7 +27,8 @@ public class UserService extends AbstractService<User, UserRepository> {
         return repository.findByLogin(login);
     }
 
-    public void deleteByLogin(@Nullable final String login) throws AbstractPetCollectorException, IllegalArgumentException {
+    public void deleteByLogin(@Nullable final String login)
+            throws AbstractPetCollectorException, IllegalArgumentException {
         if (login == null)
             throw new IllegalArgumentException("login is null");
         @NotNull
