@@ -31,8 +31,8 @@ public class DebtApi {
     private IDebtService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Debt> getDebt(@PathVariable @NotNull String id,
-            @RequestParam("userId") @NotNull String userId) {
+    public ResponseEntity<Debt> getDebt(@PathVariable @NotNull final String id,
+            @RequestParam("userId") @NotNull final String userId) {
         try {
             @NotNull
             final Debt debt = service.findByIdAndUserId(id, userId);
@@ -40,13 +40,14 @@ public class DebtApi {
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<Debt>> getDebtList(@RequestParam("status[]") String[] status,
-            @RequestParam("userId") @NotNull String userId) {
+    public ResponseEntity<List<Debt>> getDebtList(@RequestParam(value = "status", required = false) final String[] status,
+            @RequestParam("userId") @NotNull final String userId) {
         try {
             return ResponseEntity.ok(service.findAllByUserIdAndStatus(userId, status));
         } catch (@NotNull final Exception e) {
@@ -56,8 +57,8 @@ public class DebtApi {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Debt> createDebt(@RequestBody @Nullable DebtDTO debtDTO,
-            @RequestParam("userId") @NotNull String userId) {
+    public ResponseEntity<Debt> createDebt(@RequestBody @Nullable final DebtDTO debtDTO,
+            @RequestParam("userId") @NotNull final String userId) {
         try {
             return ResponseEntity.ok(service.create(debtDTO, userId));
         } catch (@NotNull final Exception e) {
@@ -67,8 +68,8 @@ public class DebtApi {
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Debt> updateDebt(@PathVariable @NotNull String id, @RequestBody @Nullable DebtDTO debtDTO,
-            @RequestParam("userId") @NotNull String userId) {
+    public ResponseEntity<Debt> updateDebt(@PathVariable @NotNull final String id, @RequestBody @Nullable final DebtDTO debtDTO,
+            @RequestParam("userId") @NotNull final String userId) {
         try {
             return ResponseEntity.ok(service.updateByIdAndUserId(debtDTO, id, userId));
         } catch (@NotNull final EntityNotFoundException e) {
@@ -80,8 +81,8 @@ public class DebtApi {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Debt> deleteDebt(@PathVariable @NotNull String id,
-            @RequestParam("userId") @NotNull String userId) {
+    public ResponseEntity<Debt> deleteDebt(@PathVariable @NotNull final String id,
+            @RequestParam("userId") @NotNull final String userId) {
         try {
             service.deleteByIdAndUserId(id, userId);
             return ResponseEntity.ok().build();

@@ -10,14 +10,14 @@ import ru.petcollector.petcollector.enumerated.DebtStatus;
 @Setter
 public class DebtorDTO {
 
-    private Optional<String> id;
+    private Optional<String> id = Optional.empty();
 
-    private Optional<String> userId;
+    private Optional<String> userId = Optional.empty();
 
-    private Optional<Float> sum;
+    private Optional<Float> sum = Optional.empty();
 
-    private Optional<String> phoneNumber;
+    private Optional<String> phoneNumber = Optional.empty();
 
-    private Optional<DebtStatus> status;
+    private Optional<DebtStatus> status = Optional.empty();
 
 }

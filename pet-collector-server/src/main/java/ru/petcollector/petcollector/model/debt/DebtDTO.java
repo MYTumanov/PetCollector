@@ -12,12 +12,12 @@ import ru.petcollector.petcollector.model.debtor.DebtorDTO;
 @Setter
 public class DebtDTO {
 
-    private Optional<Float> totalSum;
+    private Optional<Float> totalSum = Optional.empty();
 
-    private Optional<String> comment;
+    private Optional<String> comment = Optional.empty();
 
-    private Optional<DebtStatus> status;
+    private Optional<DebtStatus> status = Optional.empty();
 
-    private Optional<List<DebtorDTO>> debtors;
+    private Optional<List<DebtorDTO>> debtors = Optional.empty();
 
 }

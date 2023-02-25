@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
@@ -36,5 +37,10 @@ public abstract class AbstractModel {
 
     @JsonIgnore
     private boolean isDeleted = false;
+
+    @NotNull
+    @Version
+    @JsonIgnore
+    private String version;
 
 }

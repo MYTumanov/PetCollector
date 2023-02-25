@@ -26,7 +26,7 @@ public interface DebtMapper {
                 debtorsMap.put(debtor.getId(), debtor);
 
             for (DebtorDTO debtorDTO : debtDTO.getDebtors().get()) {
-                Debtor debtor = debtorsMap.get(debtorDTO.getId().orElseThrow(InvalidEntityParamentException::new));
+                Debtor debtor = debtorsMap.get(debtorDTO.getId().orElse(null));
                 if (debtor != null) {
                     map(debtor, debtorDTO);
                 } else {

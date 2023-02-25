@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import ru.petcollector.petcollector.api.service.IDebtService;
+import ru.petcollector.petcollector.enumerated.DebtStatus;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.exception.InvalidEntityParamentException;
 import ru.petcollector.petcollector.map.DebtMapper;
@@ -38,12 +39,15 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
 
     @Override
     @NotNull
-    public List<Debt> findAllByUserIdAndStatus(@Nullable final String userId, @Nullable final String... status) {
+    public List<Debt> findAllByUserIdAndStatus(@Nullable final String userId, @Nullable final String... statuses) {
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException();
-        if (status == null || status.length == 0)
+        if (statuses == null || statuses.length == 0)
             return findAllByUserId(userId);
-        return repository.findAllByUserIdAndStatuses(userId, status);
+        DebtStatus[] debtStatuses = new DebtStatus[statuses.length];
+        for (int i = 0; i < statuses.length; i++)
+            debtStatuses[i] = DebtStatus.toStatus(statuses[i]);
+        return repository.findAllByUserIdAndStatuses(userId, debtStatuses);
     }
 
     @Override
