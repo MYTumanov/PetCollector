@@ -1,58 +1,59 @@
 package ru.petcollector.petcollector.service;
 
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
+import ru.petcollector.petcollector.api.service.IUserService;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
+import ru.petcollector.petcollector.exception.InvalidEntityParamentException;
 import ru.petcollector.petcollector.map.UserMapper;
 import ru.petcollector.petcollector.model.user.User;
 import ru.petcollector.petcollector.model.user.UserDTO;
 import ru.petcollector.petcollector.repository.UserRepository;
 
 @Service
-public class UserService extends AbstractService<User, UserRepository> {
+public class UserService extends AbstractService<User, UserRepository> implements IUserService {
 
-    public boolean existByLogin(@Nullable final String login) throws IllegalArgumentException {
-        if (login == null)
-            throw new IllegalArgumentException("login is null");
+    @Override
+    public boolean existsByLogin(@Nullable final String login) throws IllegalArgumentException {
+        if (login == null || login.isEmpty())
+            throw new IllegalArgumentException("login");
         return repository.existsByLogin(login);
     }
 
-    @Nullable
-    public User findByLogin(@Nullable final String login) throws IllegalArgumentException {
-        if (login == null)
-            throw new IllegalArgumentException("login is null");
-        return repository.findByLogin(login);
-    }
-
-    public void deleteByLogin(@Nullable final String login)
-            throws AbstractPetCollectorException, IllegalArgumentException {
-        if (login == null)
-            throw new IllegalArgumentException("login is null");
+    @NotNull
+    @Override
+    public User create(@Nullable final UserDTO userDTO) {
+        if (userDTO == null)
+            throw new IllegalArgumentException();
+        userDTO.setVersion(Optional.of(0d));
         @NotNull
-        User user = repository.findByLogin(login);
-        if (user == null) {
-            throw new EntityNotFoundException("Entity not found by login: " + login);
-        }
-        user.setDeleted(true);
-        repository.save(user);
+        final User user = UserMapper.map(userDTO, new User());
+        return repository.save(user);
     }
 
     @NotNull
-    public User create(@NotNull final UserDTO userDTO) throws IllegalArgumentException {
-        return repository.save(UserMapper.map(userDTO));
+    @Override
+    public User updateById(@Nullable final String id, @Nullable final UserDTO userDTO)
+            throws EntityNotFoundException, InvalidEntityParamentException {
+        if (id == null || id.isEmpty())
+            throw new IllegalArgumentException("id");
+        if (userDTO == null)
+            throw new IllegalArgumentException("userDTO");
+        if (!userDTO.getVersion().isPresent())
+            throw new InvalidEntityParamentException("version");
+        return repository.save(UserMapper.map(userDTO, findById(id)));
     }
 
-    @NotNull
-    public User update(@NotNull final UserDTO userDTO) throws AbstractPetCollectorException {
-        @Nullable
-        final User user = findById(userDTO.getId());
-        if (user == null) {
-            throw new EntityNotFoundException("Entity is not found with id: " + userDTO.getId());
-        }
-        return repository.save(UserMapper.map(userDTO, user));
+    @Nullable
+    @Override
+    public User findByPhoneNumber(@Nullable final String phoneNumber) throws IllegalArgumentException {
+        if (phoneNumber == null || phoneNumber.isEmpty())
+            throw new IllegalArgumentException("phoneNumber");
+        return repository.findByPhoneNumber(phoneNumber).orElse(null);
     }
 
 }

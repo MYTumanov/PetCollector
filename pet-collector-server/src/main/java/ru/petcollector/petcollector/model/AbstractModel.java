@@ -40,7 +40,6 @@ public abstract class AbstractModel {
 
     @NotNull
     @Version
-    @JsonIgnore
-    private String version;
+    private Double version;
 
 }

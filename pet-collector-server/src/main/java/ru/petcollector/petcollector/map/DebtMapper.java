@@ -19,6 +19,7 @@ public interface DebtMapper {
         debt.setTotalSum(debtDTO.getTotalSum().orElse(debt.getTotalSum()));
         debt.setStatus(debtDTO.getStatus().orElse(debt.getStatus()));
         debt.setComment(debtDTO.getComment().orElse(debt.getComment()));
+        debt.setVersion(debtDTO.getVersion().orElse(debt.getVersion()));
 
         if (debtDTO.getDebtors().isPresent()) {
             Map<String, Debtor> debtorsMap = new HashMap<>();
