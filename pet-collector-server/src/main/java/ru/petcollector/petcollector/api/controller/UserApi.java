@@ -1,7 +1,5 @@
 package ru.petcollector.petcollector.api.controller;
 
-import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,17 +33,32 @@ public class UserApi {
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping
-    public ResponseEntity<User> existsByLogin(@RequestParam("userId") @NotNull final String userId) {
+    @GetMapping("/byPhone")
+    public ResponseEntity<String> getUserByPhone(@RequestParam("userId") @NotNull final String userId, @RequestParam("phone") @NotNull final String phone) {
         try {
-            return ResponseEntity.ok(service.findById(userId));
-        } catch (@NotNull final EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            @Nullable String response = null;
+            @Nullable final User user = service.findByPhoneNumber(phone);
+            if (user != null) {
+                response = user.getId();
+            }
+            return ResponseEntity.ok(response);
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> existsByLogin(@RequestParam("login") @NotNull final String login) {
+        try {
+            return ResponseEntity.ok(service.existsByLogin(login));
+        } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -59,6 +70,7 @@ public class UserApi {
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -71,6 +83,7 @@ public class UserApi {
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
