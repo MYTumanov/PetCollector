@@ -1,7 +1,5 @@
 package ru.petcollector.petcollector.api.controller;
 
-import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
@@ -29,56 +26,64 @@ public class UserApi {
     @Autowired
     private UserService service;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable String id) {
+    @GetMapping
+    public ResponseEntity<User> getUser(@RequestParam("userId") @NotNull final String userId) {
         try {
-            @Nullable
-            final User user = service.findById(id);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(service.findById(userId));
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<User>> getUserList() {
+    @GetMapping("/byPhone")
+    public ResponseEntity<String> getUserByPhone(@RequestParam("userId") @NotNull final String userId, @RequestParam("phone") @NotNull final String phone) {
         try {
-            return ResponseEntity.ok(service.findAll());
+            @Nullable String response = null;
+            @Nullable final User user = service.findByPhoneNumber(phone);
+            if (user != null) {
+                response = user.getId();
+            }
+            return ResponseEntity.ok(response);
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> existsByLogin(@RequestParam("login") @NotNull final String login) {
         try {
-            return ResponseEntity.ok(service.create(userDTO));
+            return ResponseEntity.ok(service.existsByLogin(login));
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> updateUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<User> updateUser(@RequestParam("userId") @NotNull final String userId, @RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok(service.update(userDTO));
+            return ResponseEntity.ok(service.updateById(userId, userDTO));
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable String id) {
+    @DeleteMapping
+    public ResponseEntity<User> deleteUser(@RequestParam("userId") @NotNull final String userId) {
         try {
-            service.deleteById(id);
+            service.deleteById(userId);
             return ResponseEntity.ok().build();
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }

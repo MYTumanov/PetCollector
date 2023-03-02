@@ -20,4 +20,6 @@ public class DebtDTO {
 
     private Optional<List<DebtorDTO>> debtors = Optional.empty();
 
+    private Optional<Double> version = Optional.empty();
+
 }

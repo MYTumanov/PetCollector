@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.petcollector.petcollector.exception.AbstractPetCollectorException;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.model.AbstractModel;
 import ru.petcollector.petcollector.repository.AbstractRepository;
@@ -18,8 +17,8 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
     @Autowired
     protected R repository;
 
-    @Nullable
-    public M findById(@NotNull final String id) throws AbstractPetCollectorException {
+    @NotNull
+    public M findById(@NotNull final String id) throws EntityNotFoundException {
         @NotNull
         Optional<M> modelOpt = repository.findById(id);
         if (!modelOpt.isPresent()) {
@@ -38,15 +37,13 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
         return repository.saveAll(models);
     }
 
-    public void deleteById(@Nullable final String id) throws AbstractPetCollectorException, IllegalArgumentException {
-        if (id == null)
-            throw new IllegalArgumentException("id is null");
+    public void deleteById(@Nullable final String id) throws EntityNotFoundException, IllegalArgumentException {
+        if (id == null || id.isEmpty())
+            throw new IllegalArgumentException("id");
         @NotNull
-        Optional<M> modelOpt = repository.findById(id);
-        if (!modelOpt.isPresent()) {
-            throw new EntityNotFoundException("Entity not found by id: " + id);
-        }
-        repository.delete(modelOpt.get());
+        final M model = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        model.setDeleted(true);
+        repository.save(model);
     }
 
     public long getSize() {

@@ -1,6 +1,6 @@
 package ru.petcollector.petcollector.model.user;
 
-import org.jetbrains.annotations.Nullable;
+import java.util.Optional;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,25 +9,20 @@ import lombok.Setter;
 @Setter
 public class UserDTO {
 
-    @Nullable
-    private String id;
+    private Optional<String> id = Optional.empty();
 
-    @Nullable
-    private String lastName;
+    private Optional<String> lastName = Optional.empty();
 
-    @Nullable
-    private String firstName;
+    private Optional<String> firstName = Optional.empty();
 
-    @Nullable
-    private String midleName;
+    private Optional<String> midleName = Optional.empty();
 
-    @Nullable
-    private String login;
+    private Optional<String> login = Optional.empty();
 
-    @Nullable
-    private String password;
+    private Optional<String> password = Optional.empty();
 
-    @Nullable
-    private String phoneNumber;
+    private Optional<String> phoneNumber = Optional.empty();
+
+    private Optional<Double> version = Optional.empty();
 
 }

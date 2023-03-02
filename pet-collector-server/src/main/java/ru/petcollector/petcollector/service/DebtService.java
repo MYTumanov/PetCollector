@@ -79,6 +79,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
         @NotNull
         final Debt debt = DebtMapper.map(debtDTO, new Debt());
         debt.setOwnerId(userId);
+        debt.setVersion(0d);
         return repository.save(debt);
     }
 

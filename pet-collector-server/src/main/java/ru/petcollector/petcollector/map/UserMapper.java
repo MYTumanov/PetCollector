@@ -7,18 +7,13 @@ import ru.petcollector.petcollector.model.user.UserDTO;
 
 public interface UserMapper {
 
-    public static User map(@NotNull final UserDTO userDTO) {
-        userDTO.setId(null);
-        return map(userDTO, new User());
-    }
-
     public static User map(@NotNull final UserDTO userDTO, @NotNull final User user) {
-        user.setFirstName(userDTO.getFirstName() != null ? userDTO.getFirstName() : user.getFirstName());
-        user.setLastName(userDTO.getLastName() != null ? userDTO.getLastName() : user.getLastName());
-        user.setMidleName(userDTO.getMidleName() != null ? userDTO.getMidleName() : user.getMidleName());
-        user.setLogin(userDTO.getLogin() != null ? userDTO.getLogin() : user.getLogin());
-        user.setPassword(userDTO.getPassword() != null ? userDTO.getPassword() : user.getPassword());
-        user.setId(userDTO.getId() != null ? userDTO.getId() : user.getId());
+        user.setFirstName(userDTO.getFirstName().orElse(user.getFirstName()));
+        user.setLastName(userDTO.getLastName().orElse(user.getLastName()));
+        user.setMidleName(userDTO.getMidleName().orElse(user.getMidleName()));
+        user.setLogin(userDTO.getLogin().orElse(user.getLogin()));
+        user.setPassword(userDTO.getPassword().orElse(user.getPassword()));
+        user.setVersion(userDTO.getVersion().orElse(user.getVersion()));
         return user;
     }
 
