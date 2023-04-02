@@ -12,7 +12,7 @@ public class AuthenicatorServiceApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx =  SpringApplication.run(AuthenicatorServiceApplication.class, args);
         Bootstrap bootstrap = ctx.getBean(Bootstrap.class);
-        bootstrap.initClient();
+        // bootstrap.initClient();
     }
 
 }
