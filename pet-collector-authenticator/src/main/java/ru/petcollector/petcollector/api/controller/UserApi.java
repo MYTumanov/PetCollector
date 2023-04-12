@@ -26,7 +26,10 @@ public class UserApi {
     @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserRegisterResponse> userRegister(@RequestBody @Nullable final UserRegisterRequest user) {
         try {
-            service.registerUser(user);
+            @Nullable final UserRegisterResponse rs = service.registerUser(user);
+            if (rs == null) 
+                throw new NullPointerException("User not registered");
+            return ResponseEntity.of(Optional.of(rs));
         } catch (@NotNull final Exception e) {
             @NotNull
             final UserRegisterResponse rs = new UserRegisterResponse();
@@ -34,12 +37,7 @@ public class UserApi {
             rs.setErrMessage(e.getMessage());
             e.printStackTrace();
             return ResponseEntity.of(Optional.of(rs));
-        }
-        @NotNull
-        final UserRegisterResponse rs = new UserRegisterResponse();
-        rs.setErrCode(0);
-        rs.setErrMessage(null);
-        return ResponseEntity.of(Optional.of(rs));
+        }        
     }
 
 }

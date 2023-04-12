@@ -13,6 +13,7 @@ public interface UserMapper {
         user.setMidleName(userDTO.getMidleName().orElse(user.getMidleName()));
         user.setLogin(userDTO.getLogin().orElse(user.getLogin()));
         user.setPassword(userDTO.getPassword().orElse(user.getPassword()));
+        user.setPhoneNumber(userDTO.getPhoneNumber().orElse(user.getPhoneNumber()));
         user.setVersion(userDTO.getVersion().orElse(user.getVersion()));
         return user;
     }

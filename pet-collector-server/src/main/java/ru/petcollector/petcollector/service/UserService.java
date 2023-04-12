@@ -32,7 +32,7 @@ public class UserService extends AbstractService<User, UserRepository> implement
         userDTO.setVersion(Optional.of(0d));
         @NotNull
         final User user = UserMapper.map(userDTO, new User());
-        return repository.save(user);
+        return repository.insert(user);
     }
 
     @NotNull

@@ -18,10 +18,10 @@ import ru.petcollector.petcollector.model.AbstractModel;
 @NoArgsConstructor
 public class User extends AbstractModel {
 
-    @NotNull
+    @Nullable
     private String lastName;
 
-    @NotNull
+    @Nullable
     private String firstName;
 
     @Nullable
