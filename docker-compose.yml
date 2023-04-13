@@ -4,13 +4,17 @@ services:
 
   pet-collector-mongo:
     image: mongo:latest
+    restart: always
     ports:
       - "27020:27017"
     container_name: pet-collector-mongo
     hostname: mongodb
     volumes:
-      - /volumes/mongodb:/data/db
-      - /volumes/mongoconfigdb:/data/configdb
+      - ./dockervolume/mongo/mongodb:/data/db
+      - ./dockervolume/mongo/mongoconfigdb:/data/configdb
+      - ./init_db.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      - MONGO_INITDB_DATABASE = api_prod_db
 
   pet-collector-server:
     image: petcollector-server:latest
@@ -20,10 +24,15 @@ services:
     hostname: pc-server
     depends_on:
       - pet-collector-mongo
+      - rabbitmq
     environment:
+    #mongodb
       - spring.data.mongodb.host=mongodb
       - spring.data.mongodb.port=27017
       - spring.data.mongodb.database=pet_collector
+    #rabbitmq
+      - rabbitmq.host=rabbitmq
+      - rabbitmq.port=5672
 
   pet-collector-authenticator:
     image: petcollector-authenticator:latest
@@ -34,9 +43,13 @@ services:
     depends_on:
       - pet-collector-mongo
     environment:
+    #mongodb
       - spring.data.mongodb.host=mongodb
       - spring.data.mongodb.port=27017
       - spring.data.mongodb.database=pet_collector
+    #rabbitmq
+      - rabbitmq.host=rabbitmq
+      - rabbitmq.port=5672
 
   krakend:
     image: devopsfaith/krakend:latest
@@ -46,3 +59,15 @@ services:
     depends_on:
       - pet-collector-authenticator
       - pet-collector-server
+
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - default_user = guest
+      - default_pass = guest
+      - default_vhost = pet.collector
