@@ -67,7 +67,5 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    environment:
-      - default_user = guest
-      - default_pass = guest
-      - default_vhost = pet.collector
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
