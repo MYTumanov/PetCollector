@@ -40,7 +40,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.formLogin(Customizer.withDefaults());   
+        http.formLogin(Customizer.withDefaults());
         return http.build();
     }
 
@@ -48,9 +48,10 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
-                requests -> requests.requestMatchers("/oauth2/authorized").permitAll().anyRequest().authenticated())
+                requests -> requests.requestMatchers("/oauth2/authorized", "/api/user/register").permitAll()
+                        .anyRequest().authenticated())
                 .csrf().disable()
-                .formLogin(Customizer.withDefaults());              
+                .formLogin(Customizer.withDefaults());
         return http.build();
     }
 
