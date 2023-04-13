@@ -21,8 +21,7 @@ hs_err_pid*
 replay_pid*
 
 # docker virtual volume
-dockervolume/mongo/mongodb/*
-dockervolume/mongo/mongoconfigdb/*
+dockervolume/
 
 ### STS ###
 .apt_generated

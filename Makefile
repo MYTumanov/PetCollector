@@ -1,4 +1,4 @@
-start: build-server1 build-server2 build-container1 build-container2 run-container
+start: build-server1 build-server2 build-container1 build-container2 prepare-dir run-container
 
 build-server1:
 	cd ./pet-collector-server && mvn clean install
@@ -11,6 +11,10 @@ build-container1:
 
 build-container2:
 	cd ./pet-collector-authenticator && docker build --pull --rm -f "Dockerfile" -t petcollector-authenticator:latest .
+
+prepare-dir:
+	@mkdir -vp './dockervolume/mongo/mongodb/'
+	@mkdir -vp './dockervolume/mongo/mongoconfigdb/'
 
 run-container:
 	docker compose -f "docker-compose.yml" up -d --build
