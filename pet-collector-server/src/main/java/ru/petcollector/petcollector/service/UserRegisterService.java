@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 
 import ru.petcollector.petcollector.model.user.UserDTO;
@@ -17,7 +16,6 @@ import ru.petcollector.petcollector.model.user.UserRegisterResponse;
 public class UserRegisterService extends UserService {
 
     @RabbitListener(queues = "${rabbitmq.queue}")
-    @SendTo()
     public UserRegisterResponse readUserFromQueue(@NotNull final UserRegisterRequest input) {
         try {
             System.out.println("Received message: " + input);
