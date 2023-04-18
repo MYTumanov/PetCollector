@@ -20,7 +20,7 @@ import ru.petcollector.petcollector.model.debtor.Debtor;
 public class Debt extends AbstractModel {
 
     @NotNull
-    private Float totalSum;
+    private Float sum;
 
     @Nullable
     private String comment;

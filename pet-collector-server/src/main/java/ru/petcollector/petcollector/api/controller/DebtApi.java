@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ru.petcollector.petcollector.api.service.IDebtService;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
+import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
 
@@ -46,10 +47,9 @@ public class DebtApi {
     }
 
     @GetMapping
-    public ResponseEntity<List<Debt>> getDebtList(@RequestParam(value = "status", required = false) final String[] status,
-            @RequestParam("userId") @NotNull final String userId) {
+    public ResponseEntity<List<AggregateDebt>> getDebtList(@RequestParam("userId") @NotNull final String userId) {
         try {
-            return ResponseEntity.ok(service.findAllByUserIdAndStatus(userId, status));
+            return ResponseEntity.ok(service.findAllByUserId(userId));
         } catch (@NotNull final Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -68,7 +68,8 @@ public class DebtApi {
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Debt> updateDebt(@PathVariable @NotNull final String id, @RequestBody @Nullable final DebtDTO debtDTO,
+    public ResponseEntity<Debt> updateDebt(@PathVariable @NotNull final String id,
+            @RequestBody @Nullable final DebtDTO debtDTO,
             @RequestParam("userId") @NotNull final String userId) {
         try {
             return ResponseEntity.ok(service.updateByIdAndUserId(debtDTO, id, userId));

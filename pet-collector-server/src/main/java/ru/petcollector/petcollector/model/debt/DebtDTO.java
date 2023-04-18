@@ -12,7 +12,7 @@ import ru.petcollector.petcollector.model.debtor.DebtorDTO;
 @Setter
 public class DebtDTO {
 
-    private Optional<Float> totalSum = Optional.empty();
+    private Optional<Float> sum = Optional.empty();
 
     private Optional<String> comment = Optional.empty();
 

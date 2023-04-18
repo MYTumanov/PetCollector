@@ -16,7 +16,7 @@ public interface DebtMapper {
     @NotNull
     public static Debt map(@NotNull final DebtDTO debtDTO, @NotNull final Debt debt)
             throws InvalidEntityParamentException {
-        debt.setTotalSum(debtDTO.getTotalSum().orElse(debt.getTotalSum()));
+        debt.setSum(debtDTO.getSum().orElse(debt.getSum()));
         debt.setStatus(debtDTO.getStatus().orElse(debt.getStatus()));
         debt.setComment(debtDTO.getComment().orElse(debt.getComment()));
         debt.setVersion(debtDTO.getVersion().orElse(debt.getVersion()));
