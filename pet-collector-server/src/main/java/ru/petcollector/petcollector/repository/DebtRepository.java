@@ -21,7 +21,7 @@ public interface DebtRepository extends AbstractRepository<Debt> {
             """
             {$facet: {
                     'userOwe': [
-                        {$match: {'debtors.userId':ObjectId('643e5fb0b88901dd42656499')}},
+                        {$match: {'debtors.userId':ObjectId('?0')}},
                         {$addFields: {
                             debtors: {$filter: {
                                 input: '$debtors',
@@ -39,7 +39,7 @@ public interface DebtRepository extends AbstractRepository<Debt> {
                         }
                     ],
                     'oweToUser': [
-                        {$match: {'ownerId':ObjectId('643e5fb0b88901dd42656499')}},
+                        {$match: {'ownerId':ObjectId('?0')}},
                         {$unwind: '$debtors'},
                         {$group: {
                             _id: '$debtors.userId',
