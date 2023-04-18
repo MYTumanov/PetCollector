@@ -11,6 +11,7 @@ import ru.petcollector.petcollector.enumerated.DebtStatus;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.exception.InvalidEntityParamentException;
 import ru.petcollector.petcollector.map.DebtMapper;
+import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
 import ru.petcollector.petcollector.repository.DebtRepository;
@@ -20,7 +21,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
 
     @Override
     @NotNull
-    public List<Debt> findAllByUserId(@Nullable final String userId) {
+    public List<AggregateDebt> findAllByUserId(@Nullable final String userId) {
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException();
         return repository.findAllByDebtorUserId(userId);
@@ -43,7 +44,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException();
         if (statuses == null || statuses.length == 0)
-            return findAllByUserId(userId);
+            throw new IllegalArgumentException();
         DebtStatus[] debtStatuses = new DebtStatus[statuses.length];
         for (int i = 0; i < statuses.length; i++)
             debtStatuses[i] = DebtStatus.toStatus(statuses[i]);

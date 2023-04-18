@@ -7,13 +7,14 @@ import org.jetbrains.annotations.Nullable;
 
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.exception.InvalidEntityParamentException;
+import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
 
 public interface IDebtService {
 
     @NotNull
-    List<Debt> findAllByUserId(@Nullable final String userId);
+    List<AggregateDebt> findAllByUserId(@Nullable final String userId);
 
     @NotNull
     Debt findByIdAndUserId(@Nullable final String id, @Nullable final String userId) throws EntityNotFoundException;
