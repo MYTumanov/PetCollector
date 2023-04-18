@@ -16,10 +16,12 @@ public interface DebtRepository extends AbstractRepository<Debt> {
     // Find all debts where userId is owner or participant.
     // Sorted by created desc.
     @Nullable
-    @Aggregation(pipeline = { """
+    @Aggregation(pipeline = {
+            "{$match: {$or: [{$and: [{'debtors.userId':ObjectId('?0')}, {'isDeleted':false}]},{$and: [{'ownerId':ObjectId('?0')}, {'isDeleted':false}]}]}},",
+            """
             {$facet: {
                     'userOwe': [
-                        {$match: {$and: [{'debtors.userId':ObjectId('?0')}, {'isDeleted':false}]}},
+                        {$match: {'debtors.userId':ObjectId('643e5fb0b88901dd42656499')}},
                         {$addFields: {
                             debtors: {$filter: {
                                 input: '$debtors',
@@ -37,7 +39,7 @@ public interface DebtRepository extends AbstractRepository<Debt> {
                         }
                     ],
                     'oweToUser': [
-                        {$match: {$and: [{'ownerId':ObjectId('?0')}, {'isDeleted':false}]}},
+                        {$match: {'ownerId':ObjectId('643e5fb0b88901dd42656499')}},
                         {$unwind: '$debtors'},
                         {$group: {
                             _id: '$debtors.userId',
@@ -46,16 +48,16 @@ public interface DebtRepository extends AbstractRepository<Debt> {
                             }
                         }
                     ]
-                }}""",
+            }}""",
             "{$project: {data: {$concatArrays: ['$userOwe', '$oweToUser']}}}",
             "{$unwind: '$data'}",
             "{$replaceRoot: {newRoot: '$data'}}",
             """
-                    {$group: {
-                            _id: {$toObjectId: '$_id'},
-                            totalDebt: {$sum: '$totalDebt'},
-                            lastCreated: {$max: '$lastCreated'}
-                    }}""",
+            {$group: {
+                    _id: {$toObjectId: '$_id'},
+                    totalDebt: {$sum: '$totalDebt'},
+                    lastCreated: {$max: '$lastCreated'}
+            }}""",
             "{$sort: {lastCreated: -1}}"
     })
     public List<AggregateDebt> findAllByDebtorUserId(@NotNull final String userId);
