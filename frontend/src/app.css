@@ -1,0 +1,20 @@
+.app {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+body {
+  /* background-color: hsl(0, 0%, 85%); */
+  /* outline: 1px solid red; */
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* height: 100vh; */
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
