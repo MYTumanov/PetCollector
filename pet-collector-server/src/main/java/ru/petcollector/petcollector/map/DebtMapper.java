@@ -1,5 +1,6 @@
 package ru.petcollector.petcollector.map;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public interface DebtMapper {
             for (Debtor debtor : debt.getDebtors())
                 debtorsMap.put(debtor.getId(), debtor);
 
-            for (DebtorDTO debtorDTO : debtDTO.getDebtors().get()) {
+            for (DebtorDTO debtorDTO : debtDTO.getDebtors().orElse(Collections.emptyList())) {
                 Debtor debtor = debtorsMap.get(debtorDTO.getId().orElse(null));
                 if (debtor != null) {
                     map(debtor, debtorDTO);

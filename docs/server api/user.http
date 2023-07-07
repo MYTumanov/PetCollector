@@ -3,6 +3,10 @@
 @port = 8085
 @host = {{protocol}}://{{hostname}}:{{port}}
 
+### return list of all users (DEV ONLY)
+
+GET {{host}}/api/user/all
+
 ### return list of users
 
 GET {{host}}/api/user

@@ -4,7 +4,10 @@
 @host = {{protocol}}://{{hostname}}:{{port}}
 
 ### return list of debts
-GET {{host}}/api/debt
+GET {{host}}/api/debt?userId={{userId}}
+
+### return detail list of debts
+GET {{host}}/api/debt/debtorid/{{debtorId}}?userId={{userId}}
 
 ### return debt with id
 GET {{host}}/api/debt?userId=643715296f76850a69071023
