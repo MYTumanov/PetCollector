@@ -1,10 +1,13 @@
 @protocol = http
 @hostname = localhost
-@port = 8080
+@port = 8085
 @host = {{protocol}}://{{hostname}}:{{port}}
 
 ### return list of debts
-GET {{host}}/api/debt
+GET {{host}}/api/debt?userId={{userId}}
+
+### return detail list of debts
+GET {{host}}/api/debt/debtorid/{{debtorId}}?userId={{userId}}
 
 ### return debt with id
 GET {{host}}/api/debt/63b859bf9d18c300961bd24b

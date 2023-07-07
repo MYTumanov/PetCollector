@@ -1,7 +1,11 @@
 @protocol = http
 @hostname = localhost
-@port = 8080
+@port = 8085
 @host = {{protocol}}://{{hostname}}:{{port}}
+
+### return list of all users (DEV ONLY)
+
+GET {{host}}/api/user/all
 
 ### return list of users
 

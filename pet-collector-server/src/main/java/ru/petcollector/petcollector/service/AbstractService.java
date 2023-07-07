@@ -27,7 +27,7 @@ public abstract class AbstractService<M extends AbstractModel, R extends Abstrac
         return modelOpt.get();
     }
 
-    @Nullable
+    @NotNull
     public List<M> findAll() {
         return repository.findAll();
     }

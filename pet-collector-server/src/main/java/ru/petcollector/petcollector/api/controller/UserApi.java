@@ -1,5 +1,6 @@
 package ru.petcollector.petcollector.api.controller;
 
+import java.util.List;
 import java.util.logging.Level;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,7 @@ public class UserApi {
             }
             return ResponseEntity.ok(response);
         } catch (@NotNull final Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, userId, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -64,7 +65,7 @@ public class UserApi {
         try {
             return ResponseEntity.ok(service.existsByLogin(login));
         } catch (@NotNull final Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, login, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -76,7 +77,7 @@ public class UserApi {
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, userId, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -89,7 +90,19 @@ public class UserApi {
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, userId, e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // TODO удалить, для тестирования
+    @Deprecated
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUser() {
+        try {
+            return ResponseEntity.ok(service.findAll());
+        } catch (@NotNull final Exception e) {
+            log.log(Level.SEVERE, "что то пошло не так", e);
             return ResponseEntity.internalServerError().build();
         }
     }
