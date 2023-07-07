@@ -14,6 +14,7 @@ import ru.petcollector.petcollector.map.DebtMapper;
 import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
+import ru.petcollector.petcollector.model.debt.DebtDetail;
 import ru.petcollector.petcollector.repository.DebtRepository;
 
 @Service
@@ -29,13 +30,13 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
 
     @Override
     @NotNull
-    public Debt findByIdAndUserId(@Nullable final String id, @Nullable final String userId)
+    public List<DebtDetail> findByDebtorIdAndUserId(@Nullable final String debtorId, @Nullable final String userId)
             throws EntityNotFoundException {
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException();
-        if (id == null || id.isEmpty())
+        if (debtorId == null || debtorId.isEmpty())
             throw new IllegalArgumentException();
-        return repository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new);
+        return repository.findByDebtorIdAndUserId(debtorId, userId).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override

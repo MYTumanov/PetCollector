@@ -10,6 +10,7 @@ import ru.petcollector.petcollector.exception.InvalidEntityParamentException;
 import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
+import ru.petcollector.petcollector.model.debt.DebtDetail;
 
 public interface IDebtService {
 
@@ -17,7 +18,7 @@ public interface IDebtService {
     List<AggregateDebt> findAllByUserId(@Nullable final String userId);
 
     @NotNull
-    Debt findByIdAndUserId(@Nullable final String id, @Nullable final String userId) throws EntityNotFoundException;
+    List<DebtDetail> findByDebtorIdAndUserId(@Nullable final String debtorId, @Nullable final String userId) throws EntityNotFoundException;
 
     @Nullable
     Debt updateByIdAndUserId(@Nullable final DebtDTO debt, @NotNull final String id, @Nullable final String userId)
