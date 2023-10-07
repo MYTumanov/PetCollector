@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.telegram.abilitybots.api.objects.MessageContext;
 
+import static ru.petcollector.petcollector.unils.Constans.USER_IDS;
+
 public abstract class AbstractHandler {
 
     @NotNull
@@ -15,7 +17,7 @@ public abstract class AbstractHandler {
 
     public String getUserId(@NotNull final MessageContext ctx) {
         final Long telegramId = ctx.user().getId();
-        userIds = ctx.bot().db().getMap("UIDS");
+        userIds = ctx.bot().db().getMap(USER_IDS);
 
         return userIds.compute(telegramId, (k, v) -> (v != null) ? v
                 : webClient.get()

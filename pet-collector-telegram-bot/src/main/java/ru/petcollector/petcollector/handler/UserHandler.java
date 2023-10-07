@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.telegram.abilitybots.api.objects.MessageContext;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.petcollector.petcollector.keyboard.KeyBoardFactory;
 import ru.petcollector.petcollector.model.TelegramUser;
 import ru.petcollector.petcollector.model.UserRegisterResponse;
 
@@ -52,6 +54,13 @@ public class UserHandler extends AbstractHandler {
                 });
         log.error("Error code: " + rs.getErrCode());
         log.error("Error message: " + rs.getErrMessage());
+
+        final SendMessage message = new SendMessage();
+        message.setChatId(ctx.chatId());
+        message.setText("Кто тебе должен?");
+        message.setReplyMarkup(KeyBoardFactory.UserRequestKeyboard());
+
+        ctx.bot().silent().execute(message);
 
     }
 

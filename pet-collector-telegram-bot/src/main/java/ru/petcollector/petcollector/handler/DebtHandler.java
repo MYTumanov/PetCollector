@@ -6,12 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButtonRequestUser;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.Update;
+
 import reactor.core.publisher.Mono;
 import ru.petcollector.petcollector.model.AggregateDebt;
 
@@ -38,21 +37,16 @@ public class DebtHandler extends AbstractHandler {
         for (AggregateDebt debt : debts) {
             stringBuilder.append(debt + "\r\n");
         }
-        
-        KeyboardButtonRequestUser requestUser = new KeyboardButtonRequestUser("1");
-        KeyboardButton keyboardButton = new KeyboardButton("DEBTOR!!!");
-        keyboardButton.setRequestUser(requestUser);
-        KeyboardRow row = new KeyboardRow(List.of(keyboardButton));
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(List.of(row));
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
 
         final SendMessage message = new SendMessage();
         message.setChatId(ctx.chatId());
-        message.setText(stringBuilder.toString());
-        message.setReplyMarkup(replyKeyboardMarkup);
-        
+        message.setText(stringBuilder.isEmpty() ? "Пусто" : stringBuilder.toString());
+
         ctx.bot().silent().execute(message);
+    }
+
+    public void addDebt(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
+
     }
 
 }
