@@ -12,4 +12,8 @@ public interface UserRepository extends AbstractRepository<User> {
 
     @NotNull
     Optional<User> findByPhoneNumber(@NotNull String login);
+
+    @NotNull
+    Optional<User> findByUserTelegramId(@NotNull Long telegramId);
+    
 }

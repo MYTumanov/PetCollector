@@ -40,6 +40,18 @@ public class UserApi {
         }
     }
 
+    @GetMapping("/byTelegramId")
+    public ResponseEntity<String> getUserIdByTelegramId(@RequestParam("telegramId") @NotNull final Long telegramId) {
+        try {
+            return ResponseEntity.ok(service.findByTelegramId(telegramId).getId());
+        } catch (@NotNull final EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (@NotNull final Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping("/byPhone")
     public ResponseEntity<String> getUserByPhone(@RequestParam("userId") @NotNull final String userId, @RequestParam("phone") @NotNull final String phone) {
         try {

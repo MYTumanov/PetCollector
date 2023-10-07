@@ -26,6 +26,7 @@
     <modules>
         <module>pet-collector-server</module>
         <module>pet-collector-authenticator</module>
+        <module>pet-collector-telegram-bot</module>
     </modules>
 
     <build>

@@ -1,0 +1,58 @@
+package ru.petcollector.petcollector.handler;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.telegram.abilitybots.api.objects.MessageContext;
+
+import lombok.extern.slf4j.Slf4j;
+import ru.petcollector.petcollector.model.TelegramUser;
+import ru.petcollector.petcollector.model.UserRegisterResponse;
+
+@Slf4j
+@Component
+@PropertySource("classpath:application.properties")
+public class UserHandler extends AbstractHandler {
+
+    @Nullable
+    @Value("${rabbitmq.exchange}")
+    private String exchange;
+
+    @Nullable
+    @Value("${rabbitmq.routingkey}")
+    private String routingkey;
+
+    @NotNull
+    private RabbitTemplate rabbiTemplate;
+
+    public UserHandler(@NotNull final WebClient webClient, @NotNull final RabbitTemplate rabbiTemplate) {
+        this.webClient = webClient;
+        this.rabbiTemplate = rabbiTemplate;
+    }
+
+    public void userStart(@NotNull final MessageContext ctx) {
+        final String userId = getUserId(ctx);
+        final TelegramUser user = new TelegramUser();
+        user.setChatId(ctx.chatId());
+        user.setTelegramUserName(ctx.user().getUserName());
+        user.setUserTelegramId(ctx.user().getId());
+        user.setUserId(userId);
+
+        Assert.notNull(exchange, "exchange can't be null");
+        Assert.notNull(routingkey, "routing key can't be null");
+        Assert.notNull(user, "user can't be null");
+        final UserRegisterResponse rs = rabbiTemplate.convertSendAndReceiveAsType(exchange, routingkey, user,
+                new ParameterizedTypeReference<UserRegisterResponse>() {
+                });
+        log.error("Error code: " + rs.getErrCode());
+        log.error("Error message: " + rs.getErrMessage());
+
+    }
+
+}

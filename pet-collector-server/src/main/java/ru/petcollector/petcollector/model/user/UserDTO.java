@@ -25,4 +25,10 @@ public class UserDTO {
 
     private Optional<Double> version = Optional.empty();
 
+    private Optional<Long> userTelegramId = Optional.empty();
+
+    private Optional<Long> chatId = Optional.empty();
+
+    private Optional<String> telegramUserName = Optional.empty();
+
 }

@@ -23,10 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RabbitMqConfig {
 
     @Value("${rabbitmq.queue}")
-    private String userQueueName;
-
-    @Value("${rabbitmq.queue.telegram}")
-    private String telegramQueueName;
+    private String queueName;
 
     @Value("${rabbitmq.exchange}")
     private String exchange;
@@ -76,24 +73,13 @@ public class RabbitMqConfig {
 
     @Bean
     @NotNull
-    public Jackson2JsonMessageConverter converter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    @NotNull
     public AmqpAdmin amqpAdmin() {
         return new RabbitAdmin(connectionFactory());
     }
 
     @Bean
-    public Queue userRegisterQueue() {
-        return new Queue(userQueueName);
-    }
-
-    @Bean
-    public Queue telegramRegisterQueue() {
-        return new Queue(telegramQueueName);
+    public Queue myQueue() {
+        return new Queue(queueName);
     }
 
     @Bean
@@ -102,13 +88,8 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    Binding bindingRegister() {
-        return BindingBuilder.bind(userRegisterQueue()).to(exchange()).with(routingkey);
-    }
-
-    @Bean
-    Binding bindingTelegramRegister() {
-        return BindingBuilder.bind(telegramRegisterQueue()).to(exchange()).with(routingkey);
+    Binding binding() {
+        return BindingBuilder.bind(myQueue()).to(exchange()).with(routingkey);
     }
 
 }

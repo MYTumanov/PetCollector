@@ -15,6 +15,10 @@ public interface UserMapper {
         user.setPassword(userDTO.getPassword().orElse(user.getPassword()));
         user.setPhoneNumber(userDTO.getPhoneNumber().orElse(user.getPhoneNumber()));
         user.setVersion(userDTO.getVersion().orElse(user.getVersion()));
+
+        user.setTelegramUserName(userDTO.getTelegramUserName().orElse(user.getTelegramUserName()));
+        user.setUserTelegramId(userDTO.getUserTelegramId().orElse(user.getUserTelegramId()));
+        user.setChatId(userDTO.getChatId().orElse(user.getChatId()));
         return user;
     }
 

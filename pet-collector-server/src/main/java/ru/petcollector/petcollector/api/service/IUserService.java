@@ -18,6 +18,9 @@ public interface IUserService {
     @Nullable
     User findByPhoneNumber(@Nullable final String phoneNumber) throws IllegalArgumentException;
 
+    @Nullable 
+    User findByTelegramId(@Nullable final Long telegramId) throws IllegalArgumentException, EntityNotFoundException;
+
     @NotNull
     User updateById(@Nullable final String id, @Nullable final UserDTO user) throws IllegalArgumentException, EntityNotFoundException, InvalidEntityParamentException;
 

@@ -56,4 +56,13 @@ public class UserService extends AbstractService<User, UserRepository> implement
         return repository.findByPhoneNumber(phoneNumber).orElse(null);
     }
 
+    @Override
+    @Nullable
+    public User findByTelegramId(@Nullable final Long telegramId)
+            throws IllegalArgumentException, EntityNotFoundException {
+        if (telegramId == null)
+            throw new IllegalArgumentException("telegramId");
+        return repository.findByUserTelegramId(telegramId).orElseThrow(() -> new EntityNotFoundException());
+    }
+
 }
