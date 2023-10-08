@@ -6,6 +6,7 @@ public interface Constans {
     String USER_IDS = "UIDS";
     String ADD_DEBT_STATE = "Add debt state";
     String UPDATE_ID = "Update Id";
+    String TEMP_USER = "Temp User";
 
     // KeyboardButtonRequestUser RequestId
     String NEW_DEBT_REQUEST_ID = "1";

@@ -15,19 +15,27 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
+import ru.petcollector.petcollector.api.IUserService;
 import ru.petcollector.petcollector.model.AggregateDebt;
+import ru.petcollector.petcollector.model.TelegramUser;
 import ru.petcollector.petcollector.unils.AddDebtState;
 
 import static ru.petcollector.petcollector.unils.Constans.ADD_DEBT_STATE;
 import static ru.petcollector.petcollector.unils.Constans.UPDATE_ID;
+import static ru.petcollector.petcollector.unils.Constans.TEMP_USER;;
 
 @Slf4j
 @Component
 public class DebtHandler extends AbstractHandler {
 
-    public DebtHandler(@NotNull final WebClient webClient, @NotNull final DBContext db) {
+    @NotNull
+    private IUserService userService;
+
+    public DebtHandler(@NotNull final WebClient webClient, @NotNull final DBContext db,
+            @NotNull final IUserService userService) {
         this.webClient = webClient;
         this.db = db;
+        this.userService = userService;
     }
 
     public void getDebts(@NotNull final MessageContext ctx) {
@@ -56,46 +64,55 @@ public class DebtHandler extends AbstractHandler {
 
     public void cancel(@NotNull final MessageContext ctx) {
         db.getMap(ADD_DEBT_STATE).put(ctx.chatId(), AddDebtState.CHOOSE_DETOR);
+        log.info("CANCEL");
     }
 
     // TODO добавить сохранение дебта
     public void addDebtChooseDebtor(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
-        db.getMap(UPDATE_ID).put(update.getMessage().getChatId(), update.getUpdateId());
+        final Long chatId = update.getMessage().getChatId();
+        db.getMap(UPDATE_ID).put(chatId, update.getUpdateId());
         final SendMessage message = new SendMessage();
         try {
             final String userId = getUserId(update.getMessage().getUserShared().getUserId());
             // TODO получить имя юзера
 
-            message.setChatId(update.getMessage().getChatId());
+            message.setChatId(chatId);
             message.setText("Сколько злотых ожидаете от 'ЮЗЕРНЕЙ'?");
 
-            db.getMap(ADD_DEBT_STATE).put(update.getMessage().getChatId(), AddDebtState.ADD_DEBT_SUM);
+            db.getMap(ADD_DEBT_STATE).put(chatId, AddDebtState.ADD_DEBT_SUM);
         } catch (WebClientException e) {
             log.error("addDebtChooseDebtor: ", e.getMessage());
 
-            message.setChatId(update.getMessage().getChatId());
+            final TelegramUser user = new TelegramUser();
+            user.setUserTelegramId(update.getMessage().getUserShared().getUserId());
+            db.getMap(TEMP_USER).put(chatId, user);
+
+            message.setChatId(chatId);
             message.setText("Не знаю о ком ты говоришь, как мне его назвать?");
 
-            db.getMap(ADD_DEBT_STATE).put(update.getMessage().getChatId(), AddDebtState.DEBTOR_NOT_FOUND);
+            db.getMap(ADD_DEBT_STATE).put(chatId, AddDebtState.DEBTOR_NOT_FOUND);
         }
         bot.silent().execute(message);
 
     }
 
-    // TODO добавить сохранение нового юзера
     public void addDebtDebtorNotFound(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
         db.getMap(UPDATE_ID).put(update.getMessage().getChatId(), update.getUpdateId());
+        final TelegramUser user = (TelegramUser) db.getMap(TEMP_USER).get(update.getMessage().getChatId());
+        user.setTelegramUserName(update.getMessage().getText());
+        userService.createUser(user);
+
         final SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId());
-        message.setText("Сколько злотых ожидаете от " + update.getMessage().getText() + "?");
+        message.setText("Сколько злотых ожидаете от " + user.getTelegramUserName() + "?");
         bot.silent().execute(message);
 
         db.getMap(ADD_DEBT_STATE).put(update.getMessage().getChatId(), AddDebtState.ADD_DEBT_SUM);
-
     }
 
     public void addDebtSum(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
         db.getMap(UPDATE_ID).put(update.getMessage().getChatId(), update.getUpdateId());
+
         final SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId());
         message.setText("Описание");

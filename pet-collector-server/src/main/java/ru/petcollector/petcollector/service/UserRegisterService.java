@@ -21,7 +21,8 @@ public class UserRegisterService extends UserService {
     @RabbitListener(queues = "${rabbitmq.queue}")
     public UserRegisterResponse readUserFromQueue(@NotNull final UserRegisterRequest input) {
         try {
-            @NotNull final UserDTO userDTO = new UserDTO();
+            @NotNull
+            final UserDTO userDTO = new UserDTO();
             userDTO.setLogin(Optional.of(input.getLogin()));
             userDTO.setPassword(Optional.of(input.getPassword()));
             userDTO.setPhoneNumber(Optional.of(input.getPhoneNumber()));
@@ -36,12 +37,15 @@ public class UserRegisterService extends UserService {
     @RabbitListener(queues = "${rabbitmq.queue.telegram}")
     public UserRegisterResponse readUserFromQueue(@NotNull final UserTelegramRegisterRequest input) {
         try {
-            @NotNull final UserDTO userDTO = new UserDTO();
-            userDTO.setChatId(Optional.of(input.getChatId()));
+            @NotNull
+            final UserDTO userDTO = new UserDTO();
+            if (input.getChatId() != null)
+                userDTO.setChatId(Optional.of(input.getChatId()));
             userDTO.setTelegramUserName(Optional.of(input.getTelegramUserName()));
             userDTO.setUserTelegramId(Optional.of(input.getUserTelegramId()));
             try {
-                @NotNull final User user = findByTelegramId(input.getUserTelegramId());
+                @NotNull
+                final User user = findByTelegramId(input.getUserTelegramId());
                 userDTO.setVersion(Optional.of(user.getVersion()));
                 userDTO.setId(Optional.of(user.getId()));
             } catch (@NotNull final EntityNotFoundException e) {
@@ -56,5 +60,5 @@ public class UserRegisterService extends UserService {
             return new UserRegisterResponse(500, e.getMessage());
         }
     }
-    
+
 }

@@ -1,47 +1,30 @@
 package ru.petcollector.petcollector.handler;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import lombok.extern.slf4j.Slf4j;
+import ru.petcollector.petcollector.api.IUserService;
 import ru.petcollector.petcollector.keyboard.KeyBoardFactory;
 import ru.petcollector.petcollector.model.TelegramUser;
-import ru.petcollector.petcollector.model.UserRegisterResponse;
 import ru.petcollector.petcollector.unils.AddDebtState;
 
 import static ru.petcollector.petcollector.unils.Constans.ADD_DEBT_STATE;
 
-@Slf4j
 @Component
-@PropertySource("classpath:application.properties")
 public class UserHandler extends AbstractHandler {
 
-    @Nullable
-    @Value("${rabbitmq.exchange}")
-    private String exchange;
-
-    @Nullable
-    @Value("${rabbitmq.routingkey}")
-    private String routingkey;
-
     @NotNull
-    private RabbitTemplate rabbiTemplate;
+    private IUserService userService;
 
-    public UserHandler(@NotNull final WebClient webClient, @NotNull final RabbitTemplate rabbiTemplate,
-            @NotNull final DBContext db) {
+    public UserHandler(@NotNull final WebClient webClient, @NotNull final DBContext db,
+            @NotNull final IUserService userService) {
         this.webClient = webClient;
-        this.rabbiTemplate = rabbiTemplate;
         this.db = db;
+        this.userService = userService;
     }
 
     public void userStart(@NotNull final MessageContext ctx) {
@@ -52,15 +35,7 @@ public class UserHandler extends AbstractHandler {
         user.setUserTelegramId(ctx.user().getId());
         user.setUserId(userId);
 
-        Assert.notNull(exchange, "exchange can't be null");
-        Assert.notNull(routingkey, "routing key can't be null");
-        Assert.notNull(user, "user can't be null");
-        final UserRegisterResponse rs = rabbiTemplate.convertSendAndReceiveAsType(exchange, routingkey, user,
-                new ParameterizedTypeReference<UserRegisterResponse>() {
-                });
-        log.error("Error code: " + rs.getErrCode());
-        log.error("Error message: " + rs.getErrMessage());
-
+        userService.createUser(user);
         final SendMessage message = new SendMessage();
         message.setChatId(ctx.chatId());
         message.setText("Кто тебе должен?");

@@ -34,6 +34,9 @@ public class RabbitMqConfig {
     @Value("${rabbitmq.routingkey}")
     private String routingkey;
 
+    @Value("${rabbitmq.routingkey.telegram}")
+    private String routingkeyTelegram;
+
     @Value("${rabbitmq.username}")
     private String username;
 
@@ -108,7 +111,7 @@ public class RabbitMqConfig {
 
     @Bean
     Binding bindingTelegramRegister() {
-        return BindingBuilder.bind(telegramRegisterQueue()).to(exchange()).with(routingkey);
+        return BindingBuilder.bind(telegramRegisterQueue()).to(exchange()).with(routingkeyTelegram);
     }
 
 }
