@@ -3,7 +3,7 @@ package ru.petcollector.petcollector.handler;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
-import org.springframework.core.ParameterizedTypeReference;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
@@ -14,8 +14,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
+import ru.petcollector.petcollector.api.IDebtService;
 import ru.petcollector.petcollector.api.IUserService;
+import ru.petcollector.petcollector.exception.UserNotFoundException;
 import ru.petcollector.petcollector.model.AggregateDebt;
 import ru.petcollector.petcollector.model.TelegramUser;
 import ru.petcollector.petcollector.unils.AddDebtState;
@@ -29,42 +30,44 @@ import static ru.petcollector.petcollector.unils.Constans.TEMP_USER;;
 public class DebtHandler extends AbstractHandler {
 
     @NotNull
-    private IUserService userService;
+    private IDebtService debtService;
 
     public DebtHandler(@NotNull final WebClient webClient, @NotNull final DBContext db,
-            @NotNull final IUserService userService) {
+            @NotNull final IUserService userService, @NotNull final IDebtService debtService) {
         this.webClient = webClient;
         this.db = db;
         this.userService = userService;
+        this.debtService = debtService;
     }
 
     public void getDebts(@NotNull final MessageContext ctx) {
-        final String userId = getUserId(ctx.user().getId());
-        Mono<List<AggregateDebt>> response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/debt")
-                        .queryParam("userId", userId)
-                        .build())
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<AggregateDebt>>() {
-                });
+        try {
+            @Nullable
+            final String userId = getUserId(ctx.user().getId());
+            if (userId == null || userId.isEmpty())
+                throw new UserNotFoundException();
 
-        List<AggregateDebt> debts = response.block();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (AggregateDebt debt : debts) {
-            stringBuilder.append(debt + "\r\n");
+            List<AggregateDebt> debts = debtService.getDebts(userId);
+            StringBuilder stringBuilder = new StringBuilder();
+            for (AggregateDebt debt : debts) {
+                stringBuilder.append(debt + "\r\n");
+            }
+
+            final SendMessage message = new SendMessage();
+            message.setChatId(ctx.chatId());
+            message.setText(stringBuilder.isEmpty() ? "Пусто" : stringBuilder.toString());
+
+            ctx.bot().silent().execute(message);
+        } catch (@NotNull final UserNotFoundException userEx) {
+            log.error("User not found", userEx);
+        } catch (@NotNull final WebClientException wcEx) {
+            log.error("DebtHandler.getDebts ", wcEx);
         }
-
-        final SendMessage message = new SendMessage();
-        message.setChatId(ctx.chatId());
-        message.setText(stringBuilder.isEmpty() ? "Пусто" : stringBuilder.toString());
-
-        ctx.bot().silent().execute(message);
     }
 
     public void cancel(@NotNull final MessageContext ctx) {
+        log.info("CANCEL " + db.getMap(ADD_DEBT_STATE).get(ctx.chatId()));
         db.getMap(ADD_DEBT_STATE).put(ctx.chatId(), AddDebtState.CHOOSE_DETOR);
-        log.info("CANCEL");
     }
 
     // TODO добавить сохранение дебта
@@ -72,24 +75,22 @@ public class DebtHandler extends AbstractHandler {
         final Long chatId = update.getMessage().getChatId();
         db.getMap(UPDATE_ID).put(chatId, update.getUpdateId());
         final SendMessage message = new SendMessage();
+        message.setChatId(chatId);
         try {
             final String userId = getUserId(update.getMessage().getUserShared().getUserId());
             // TODO получить имя юзера
 
-            message.setChatId(chatId);
             message.setText("Сколько злотых ожидаете от 'ЮЗЕРНЕЙ'?");
 
             db.getMap(ADD_DEBT_STATE).put(chatId, AddDebtState.ADD_DEBT_SUM);
-        } catch (WebClientException e) {
+        } catch (UserNotFoundException e) {
             log.error("addDebtChooseDebtor: ", e.getMessage());
 
             final TelegramUser user = new TelegramUser();
             user.setUserTelegramId(update.getMessage().getUserShared().getUserId());
-            db.getMap(TEMP_USER).put(chatId, user);
-
-            message.setChatId(chatId);
             message.setText("Не знаю о ком ты говоришь, как мне его назвать?");
 
+            db.getMap(TEMP_USER).put(chatId, user);
             db.getMap(ADD_DEBT_STATE).put(chatId, AddDebtState.DEBTOR_NOT_FOUND);
         }
         bot.silent().execute(message);

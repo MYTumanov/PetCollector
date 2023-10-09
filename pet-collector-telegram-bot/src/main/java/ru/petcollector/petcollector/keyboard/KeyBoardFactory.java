@@ -12,6 +12,8 @@ import static ru.petcollector.petcollector.unils.Constans.NEW_DEBT;
 
 public class KeyBoardFactory {
 
+    private KeyBoardFactory(){}
+
     public static ReplyKeyboardMarkup UserRequestKeyboard() {
         KeyboardButtonRequestUser requestUser = new KeyboardButtonRequestUser(NEW_DEBT_REQUEST_ID);
         KeyboardButton keyboardButton = new KeyboardButton(NEW_DEBT);

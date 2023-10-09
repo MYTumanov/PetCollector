@@ -1,5 +1,6 @@
 ### Backend ###
 */target/
+target/
 
 # Compiled class file
 *.class

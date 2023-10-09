@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class CollectorBot extends AbilityBot {
 
     @NotNull
-    private DBContext db;
+    private DBContext petCollectorDb;
     
     @NotNull
     private DebtAbility debtAbility;
@@ -22,14 +22,14 @@ public class CollectorBot extends AbilityBot {
     private UserAbility userAbility;
 
     public CollectorBot(@NotNull final TelegramBotsApi botsApi,
-                        @NotNull final DBContext db,
+                        @NotNull final DBContext petCollectorDb,
                         @NotNull final DebtAbility debtAbility,
                         @NotNull final UserAbility userAbility,
                         @Value("${bot.token}") final String token,
                         @Value("${bot.name}") final String userName
     ) throws TelegramApiException {
-        super(token, userName, db);
-        this.db = db;
+        super(token, userName, petCollectorDb);
+        this.petCollectorDb = petCollectorDb;
         this.debtAbility = debtAbility;
         this.userAbility = userAbility;
         botsApi.registerBot(this);

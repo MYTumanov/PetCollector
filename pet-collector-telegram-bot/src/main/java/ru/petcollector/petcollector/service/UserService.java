@@ -8,9 +8,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.petcollector.petcollector.api.IUserService;
+import ru.petcollector.petcollector.exception.UserNotFoundException;
 import ru.petcollector.petcollector.model.TelegramUser;
 import ru.petcollector.petcollector.model.UserRegisterResponse;
 
@@ -30,8 +32,12 @@ public class UserService implements IUserService {
     @NotNull
     private RabbitTemplate rabbiTemplate;
 
-    public UserService(@NotNull final RabbitTemplate rabbiTemplate) {
+    @NotNull
+    private WebClient webClient;
+
+    public UserService(@NotNull final RabbitTemplate rabbiTemplate, @NotNull final WebClient webClient) {
         this.rabbiTemplate = rabbiTemplate;
+        this.webClient = webClient;
     }
 
     @NotNull
@@ -48,6 +54,21 @@ public class UserService implements IUserService {
         log.error("Error message: " + rs.getErrMessage());
 
         return rs;
+    }
+
+    @Override
+    @NotNull
+    public String getUserIdByTelegramId(@NotNull final Long telegramUserId) throws UserNotFoundException {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/user/byTelegramId")
+                        .queryParam("telegramId", telegramUserId)
+                        .build())
+                .retrieve()
+                .onStatus(status -> status.value() == 404,
+                        r -> r.bodyToMono(String.class).map(UserNotFoundException::new))
+                .bodyToMono(String.class)
+                .block();
     }
 
 }
