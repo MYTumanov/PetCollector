@@ -1,5 +1,7 @@
 package ru.petcollector.petcollector.api.service;
 
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,5 +30,9 @@ public interface IUserService {
     User create(@Nullable final UserDTO user);
 
     void deleteById(@Nullable final String id) throws IllegalArgumentException, EntityNotFoundException;
+
+    @NotNull
+    @Deprecated
+    public List<User> findAll();
 
 }

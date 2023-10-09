@@ -1,5 +1,6 @@
 package ru.petcollector.petcollector.map;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ public interface DebtMapper {
     @NotNull
     public static Debt map(@NotNull final DebtDTO debtDTO, @NotNull final Debt debt)
             throws InvalidEntityParamentException {
-        debt.setSum(debtDTO.getSum().orElse(debt.getSum()));
         debt.setStatus(debtDTO.getStatus().orElse(debt.getStatus()));
         debt.setComment(debtDTO.getComment().orElse(debt.getComment()));
         debt.setVersion(debtDTO.getVersion().orElse(debt.getVersion()));
@@ -26,7 +26,7 @@ public interface DebtMapper {
             for (Debtor debtor : debt.getDebtors())
                 debtorsMap.put(debtor.getId(), debtor);
 
-            for (DebtorDTO debtorDTO : debtDTO.getDebtors().get()) {
+            for (DebtorDTO debtorDTO : debtDTO.getDebtors().orElse(Collections.emptyList())) {
                 Debtor debtor = debtorsMap.get(debtorDTO.getId().orElse(null));
                 if (debtor != null) {
                     map(debtor, debtorDTO);

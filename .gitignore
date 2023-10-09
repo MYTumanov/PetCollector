@@ -41,6 +41,7 @@ frontend/dist
 ### VS Code ###
 .vscode/
 .idea
+target/
 
 ### OS ###
 .DS_Store

@@ -22,6 +22,7 @@ import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
+import ru.petcollector.petcollector.model.debt.DebtDetail;
 
 @RestController
 @RequestMapping(path = "api/debt")
@@ -31,13 +32,17 @@ public class DebtApi {
     @Autowired
     private IDebtService service;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Debt> getDebt(@PathVariable @NotNull final String id,
+    // Получение детального списка задолжностей для конкретного пользователя и
+    // задолжника.
+    // Задолжности могут быть адресованы в обе стороны:
+    // Пользователь1 <--> Пользователь2
+    @GetMapping("debtorid/{id}")
+    public ResponseEntity<List<DebtDetail>> getDebtsDetail(@PathVariable("id") @NotNull final String debtorId,
             @RequestParam("userId") @NotNull final String userId) {
         try {
             @NotNull
-            final Debt debt = service.findByIdAndUserId(id, userId);
-            return ResponseEntity.ok(debt);
+            final List<DebtDetail> debts = service.findByDebtorIdAndUserId(debtorId, userId);
+            return ResponseEntity.ok(debts);
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (@NotNull final Exception e) {
@@ -46,8 +51,11 @@ public class DebtApi {
         }
     }
 
+    // Получение списка дебдов для пользователя. Дебды сгруппированы по юзерам,
+    // задолжности просуммированы. Может быть отрицательная или положительная
+    // задолжность. Юзеры уникальны
     @GetMapping
-    public ResponseEntity<List<AggregateDebt>> getDebtList(@RequestParam("userId") @NotNull final String userId) {
+    public ResponseEntity<List<AggregateDebt>> getDebts(@RequestParam("userId") @NotNull final String userId) {
         try {
             return ResponseEntity.ok(service.findAllByUserId(userId));
         } catch (@NotNull final Exception e) {

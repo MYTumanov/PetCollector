@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.repository.Aggregation;
 import ru.petcollector.petcollector.enumerated.DebtStatus;
 import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
+import ru.petcollector.petcollector.model.debt.DebtDetail;
 
 public interface DebtRepository extends AbstractRepository<Debt> {
 
@@ -21,7 +22,7 @@ public interface DebtRepository extends AbstractRepository<Debt> {
             """
             {$facet: {
                     'userOwe': [
-                        {$match: {'debtors.userId':ObjectId('643e5fb0b88901dd42656499')}},
+                        {$match: {'debtors.userId':ObjectId('?0')}},
                         {$addFields: {
                             debtors: {$filter: {
                                 input: '$debtors',
@@ -39,7 +40,7 @@ public interface DebtRepository extends AbstractRepository<Debt> {
                         }
                     ],
                     'oweToUser': [
-                        {$match: {'ownerId':ObjectId('643e5fb0b88901dd42656499')}},
+                        {$match: {'ownerId':ObjectId('?0')}},
                         {$unwind: '$debtors'},
                         {$group: {
                             _id: '$debtors.userId',
@@ -69,6 +70,17 @@ public interface DebtRepository extends AbstractRepository<Debt> {
             "{$addFields: { debtors: { $filter: { input: '$debtors', as: 'debtor', cond: { $eq: ['$$debtor.userId', ObjectId('?1')]}}}}}",
             "{$unionWith: { coll: 'debts', pipeline: [{ $match: {$and:[{'_id':ObjectId('?0')},{'ownerId': ObjectId('?1')}, {'isDeleted':false}]}}]}}" })
     public Optional<Debt> findByIdAndUserId(@NotNull final String id, @NotNull final String userId);
+
+    @NotNull
+    @Aggregation(pipeline = {
+            "{$match:{$or : [{$and:[{'ownerId':ObjectId('?1')},{'debtors.userId':ObjectId('?0')},{'isDeleted':false}]}, {$and:[{'ownerId':ObjectId('?0')},{'debtors.userId':ObjectId('?1')},{'isDeleted':false}]}]}}",
+            "{$addFields: { debtors: { $filter: { input: '$debtors', as: 'debtor', cond: { $or : [{$eq: ['$$debtor.userId', ObjectId('?0')]},{$eq: ['$$debtor.userId', ObjectId('?1')]}]}}}}}",
+            "{$project : {ownerId : 1, sum : '$debtors.sum', status : '$debtors.status', created : 1, debtorId : '$debtors.userId'}}",
+            "{$unwind: '$sum'}",
+            "{$unwind: '$status'}",
+            "{$unwind: '$debtorId'}",
+            "{$sort : {'created' : -1}}"})
+    public Optional<List<DebtDetail>> findByDebtorIdAndUserId(@NotNull final String debtorId, @NotNull final String userId);
 
     // Find all debts where userId is owner or participants
     // and statuses are equal to given.

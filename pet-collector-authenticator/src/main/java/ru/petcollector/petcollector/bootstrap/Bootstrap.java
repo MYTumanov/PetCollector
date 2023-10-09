@@ -7,9 +7,11 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.java.Log;
 import ru.petcollector.petcollector.repository.RegistredClientRepositoryMongoDB;
 
 @Component
+@Log
 public class Bootstrap {
 
     @NotNull
@@ -25,6 +27,7 @@ public class Bootstrap {
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE).scope("read").scope("write")
                     .redirectUri("http://127.0.0.1:8090/oauth2/authorized").build();
 
+            log.info(registeredClient.toString());
             repository.save(registeredClient);
         } catch (@NotNull final Exception e) {
             e.printStackTrace();

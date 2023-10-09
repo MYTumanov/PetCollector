@@ -1,7 +1,11 @@
 @protocol = http
 @hostname = localhost
-@port = 8080
+@port = 8085
 @host = {{protocol}}://{{hostname}}:{{port}}
+
+### return list of all users (DEV ONLY)
+
+GET {{host}}/api/user/all
 
 ### return list of users
 
@@ -9,7 +13,7 @@ GET {{host}}/api/user
 
 ### return user with id
 
-GET {{host}}/api/user/123
+GET {{host}}/api/user?userId=643715296f76850a69071023
 
 ### create new user
 

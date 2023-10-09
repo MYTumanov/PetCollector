@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.petcollector.petcollector.api.service.IDebtService;
 import ru.petcollector.petcollector.enumerated.DebtStatus;
 import ru.petcollector.petcollector.exception.EntityNotFoundException;
@@ -14,8 +15,10 @@ import ru.petcollector.petcollector.map.DebtMapper;
 import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
+import ru.petcollector.petcollector.model.debt.DebtDetail;
 import ru.petcollector.petcollector.repository.DebtRepository;
 
+@Slf4j
 @Service
 public class DebtService extends AbstractService<Debt, DebtRepository> implements IDebtService {
 
@@ -29,13 +32,13 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
 
     @Override
     @NotNull
-    public Debt findByIdAndUserId(@Nullable final String id, @Nullable final String userId)
+    public List<DebtDetail> findByDebtorIdAndUserId(@Nullable final String debtorId, @Nullable final String userId)
             throws EntityNotFoundException {
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException();
-        if (id == null || id.isEmpty())
+        if (debtorId == null || debtorId.isEmpty())
             throw new IllegalArgumentException();
-        return repository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new);
+        return repository.findByDebtorIdAndUserId(debtorId, userId).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -80,8 +83,8 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
         @NotNull
         final Debt debt = DebtMapper.map(debtDTO, new Debt());
         debt.setOwnerId(userId);
-        debt.setVersion(0d);
-        return repository.save(debt);
+        log.info("Debt version" + debt.getVersion());
+        return repository.insert(debt);
     }
 
     @Override
