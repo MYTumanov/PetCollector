@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -19,9 +20,6 @@ import ru.petcollector.petcollector.model.debtor.Debtor;
 @Document("debts")
 public class Debt extends AbstractModel {
 
-    @NotNull
-    private Float sum;
-
     @Nullable
     private String comment;
 
@@ -34,5 +32,15 @@ public class Debt extends AbstractModel {
 
     @NotNull
     private List<Debtor> debtors = new ArrayList<>();
+
+    @NotNull
+    @ReadOnlyProperty
+    public Float getTotalSum() {
+        Float sum = 0f;
+        for (Debtor debtor : debtors) {
+            sum += debtor.getSum();
+        }
+        return sum;
+    }
 
 }
