@@ -15,4 +15,7 @@ public interface IUserService {
     @NotNull
     String getUserIdByTelegramId(@NotNull final Long telegramUserId) throws UserNotFoundException;
 
+    @NotNull
+    TelegramUser getUser(@NotNull final String userId) throws UserNotFoundException;
+
 }

@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import ru.petcollector.petcollector.api.IDebtService;
 import ru.petcollector.petcollector.model.AggregateDebt;
+import ru.petcollector.petcollector.model.TelegramDebt;
 
 @Service
 public class DebtService implements IDebtService {
@@ -30,7 +31,20 @@ public class DebtService implements IDebtService {
                         .queryParam("userId", userId)
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<AggregateDebt>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<AggregateDebt>>() {
+                })
+                .block();
+    }
+
+    @Override
+    public void createDebt(@NotNull final TelegramDebt debt, @NotNull final String userId) {
+        webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/debt")
+                        .queryParam("userId", userId)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
                 .block();
     }
 

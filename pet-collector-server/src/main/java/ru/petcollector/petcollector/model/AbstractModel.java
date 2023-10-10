@@ -38,7 +38,6 @@ public abstract class AbstractModel {
     @JsonIgnore
     private boolean isDeleted = false;
 
-    // @NotNull
     @Version
     private Double version;
 

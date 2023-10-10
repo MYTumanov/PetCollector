@@ -1,8 +1,6 @@
 package ru.petcollector.petcollector.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -11,21 +9,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TelegramDebt implements Serializable {
+public class TelegramDebtor implements Serializable {
 
     @Nullable
     private String id;
 
     @Nullable
-    private String ownerId;
+    private String userId;
 
     @Nullable
     private Float sum;
 
-    @Nullable
-    private String comment;
-
-    @Nullable
-    private List<TelegramDebtor> debtors = new ArrayList<>();
-    
 }

@@ -1,25 +1,28 @@
 package ru.petcollector.petcollector.unils;
 
-public interface Constans {
+public class Constans {
 
     // Database Map
-    String USER_IDS = "UIDS";
-    String ADD_DEBT_STATE = "Add debt state";
-    String UPDATE_ID = "Update Id";
-    String TEMP_USER = "Temp User";
+    public static final String USER_IDS = "UIDS";
+    public static final String ADD_DEBT_STATE = "Add debt state";
+    public static final String UPDATE_ID = "Update Id";
+    public static final String TEMP_USER = "Temp User";
+    public static final String TEMP_DEBT = "Temp Debt";
 
     // KeyboardButtonRequestUser RequestId
-    String NEW_DEBT_REQUEST_ID = "1";
+    public static final String NEW_DEBT_REQUEST_ID = "1";
 
     // Buttons name
-    String NEW_DEBT = "/newDebt";
+    public static final String NEW_DEBT = "/newDebt";
 
     // Command names
-    String GET_DEBTS = "getdebts";
-    String CANCEL_COMMAND = "cancel";
+    public static final String GET_DEBTS = "getdebts";
+    public static final String CANCEL_COMMAND = "cancel";
 
     // Command infos
-    String GET_DEBT_INFO = "Список задолжностей";
-    String CANCEL_COMMAND_INFO = "Отменить операцию";
-    
+    public static final String GET_DEBT_INFO = "Список задолжностей";
+    public static final String CANCEL_COMMAND_INFO = "Отменить операцию";
+
+    private Constans() {}
+
 }

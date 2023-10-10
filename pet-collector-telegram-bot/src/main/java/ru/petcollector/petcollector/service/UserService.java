@@ -59,7 +59,7 @@ public class UserService implements IUserService {
     @Override
     @NotNull
     public String getUserIdByTelegramId(@NotNull final Long telegramUserId) throws UserNotFoundException {
-        return webClient.get()
+        final String rs = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/user/byTelegramId")
                         .queryParam("telegramId", telegramUserId)
@@ -69,6 +69,29 @@ public class UserService implements IUserService {
                         r -> r.bodyToMono(String.class).map(UserNotFoundException::new))
                 .bodyToMono(String.class)
                 .block();
+        if (rs == null)
+            throw new UserNotFoundException("UserService.getUserIdByTelegramId rs is null");
+
+        return rs;
+    }
+
+    @Override
+    @NotNull
+    public TelegramUser getUser(@NotNull String userId) throws UserNotFoundException {
+        final TelegramUser rs = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/user")
+                        .queryParam("userId", userId)
+                        .build())
+                .retrieve()
+                .onStatus(status -> status.value() == 404,
+                        r -> r.bodyToMono(String.class).map(UserNotFoundException::new))
+                .bodyToMono(TelegramUser.class)
+                .block();
+        if (rs == null)
+            throw new UserNotFoundException("UserService.getUser rs is null");
+
+        return rs;
     }
 
 }
