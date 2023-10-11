@@ -21,7 +21,7 @@ import reactor.netty.http.client.HttpClient;
 public class WebClientConfig {
 
     @NotNull
-    private static final String BASE_URL = "http://localhost:8085/api";
+    private static final String BASE_URL = "http://pc-server:8085/api";
 
     public static final int TIMEOUT = 1000;
 
