@@ -34,7 +34,7 @@ public class UserHandler extends AbstractHandler {
         user.setUserTelegramId(ctx.user().getId());
         try {
             final String userId = getUserId(ctx.user().getId());
-            user.setUserId(userId);
+            user.setId(userId);
         } catch (@NotNull final UserNotFoundException e) {
             log.info("User " + ctx.user().getId() + " not found");
         }

@@ -124,7 +124,7 @@ public class DebtHandler extends AbstractHandler {
             final TelegramDebt debt = new TelegramDebt();
             final TelegramDebtor debtor = new TelegramDebtor();
             debtor.setSum(debtSum);
-            debtor.setUserId(userDebtor.getUserId());
+            debtor.setUserId(userDebtor.getId());
             debt.getDebtors().add(debtor);
             db.getMap(TEMP_DEBT).put(update.getMessage().getChatId(), debt);
 
@@ -147,6 +147,7 @@ public class DebtHandler extends AbstractHandler {
         db.getMap(UPDATE_ID).put(update.getMessage().getChatId(), update.getUpdateId());
         final TelegramDebt debt = (TelegramDebt) db.getMap(TEMP_DEBT).get(update.getMessage().getChatId());
         debt.setComment(update.getMessage().getText());
+        db.getMap(TEMP_DEBT).put(update.getMessage().getChatId(), debt);
         final SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId());
         message.setText("Сохраняю?");
@@ -157,8 +158,9 @@ public class DebtHandler extends AbstractHandler {
     public void addDebt(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
         final SendMessage message = new SendMessage();
         try {
+            log.info("DEBT: " + db.getMap(TEMP_DEBT).get(update.getMessage().getChatId()).toString());
             debtService.createDebt((TelegramDebt) db.getMap(TEMP_DEBT).get(update.getMessage().getChatId()),
-                    getUserId(update.getChatMember().getFrom().getId()));
+                    getUserId(update.getMessage().getFrom().getId()));
             message.setChatId(update.getMessage().getChatId());
             message.setText("Отправил");
             bot.silent().execute(message);

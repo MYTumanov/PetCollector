@@ -27,5 +27,16 @@ public class TelegramDebt implements Serializable {
 
     @Nullable
     private List<TelegramDebtor> debtors = new ArrayList<>();
-    
+
+    @Override
+    public String toString() {
+        return "{" +
+                " id='" + getId() + "'" +
+                ", ownerId='" + getOwnerId() + "'" +
+                ", sum='" + getSum() + "'" +
+                ", comment='" + getComment() + "'" +
+                ", debtors='" + getDebtors() + "'" +
+                "}";
+    }
+
 }

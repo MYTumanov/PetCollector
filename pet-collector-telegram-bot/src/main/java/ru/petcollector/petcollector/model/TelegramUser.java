@@ -12,7 +12,7 @@ import lombok.Setter;
 public class TelegramUser implements Serializable {
 
     @Nullable
-    private String userId;
+    private String id;
 
     @Nullable
     private Long userTelegramId;

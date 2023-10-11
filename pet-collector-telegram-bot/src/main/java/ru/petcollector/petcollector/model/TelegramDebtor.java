@@ -20,4 +20,13 @@ public class TelegramDebtor implements Serializable {
     @Nullable
     private Float sum;
 
+    @Override
+    public String toString() {
+        return "{" +
+                " id='" + getId() + "'" +
+                ", userId='" + getUserId() + "'" +
+                ", sum='" + getSum() + "'" +
+                "}";
+    }
+
 }
