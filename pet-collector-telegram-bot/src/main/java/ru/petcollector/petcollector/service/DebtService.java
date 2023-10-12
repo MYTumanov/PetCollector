@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserter;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +17,9 @@ import ru.petcollector.petcollector.model.TelegramDebt;
 @Slf4j
 @Service
 public class DebtService implements IDebtService {
+
+    @NotNull
+    private static final String USERID = "userId";
 
     @NotNull
     private WebClient webClient;
@@ -33,7 +34,7 @@ public class DebtService implements IDebtService {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/debt")
-                        .queryParam("userId", userId)
+                        .queryParam(USERID, userId)
                         .build())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<AggregateDebt>>() {
@@ -47,12 +48,26 @@ public class DebtService implements IDebtService {
         webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/debt")
-                        .queryParam("userId", userId)
+                        .queryParam(USERID, userId)
                         .build())
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(debt)
                 .retrieve()
                 .bodyToMono(String.class)
+                .block();
+    }
+
+    @Nullable
+    @Override
+    public List<TelegramDebt> getDebtsDetail(@NotNull String userId, @NotNull String debtorId) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/debt/debtorid/" + debtorId)
+                        .queryParam(USERID, userId)
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<TelegramDebt>>() {
+                })
                 .block();
     }
 

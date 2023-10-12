@@ -1,20 +1,26 @@
 package ru.petcollector.petcollector.keyboard;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButtonRequestUser;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+
+import ru.petcollector.petcollector.model.Button;
 
 import static ru.petcollector.petcollector.unils.Constans.NEW_DEBT_REQUEST_ID;
 import static ru.petcollector.petcollector.unils.Constans.NEW_DEBT;
 
 public class KeyBoardFactory {
 
-    private KeyBoardFactory(){}
+    private KeyBoardFactory() {
+    }
 
-    public static ReplyKeyboardMarkup UserRequestKeyboard() {
+    public static ReplyKeyboardMarkup userRequestKeyboard() {
         KeyboardButtonRequestUser requestUser = new KeyboardButtonRequestUser(NEW_DEBT_REQUEST_ID);
         KeyboardButton keyboardButton = new KeyboardButton(NEW_DEBT);
         keyboardButton.setRequestUser(requestUser);
@@ -24,6 +30,21 @@ public class KeyBoardFactory {
         replyKeyboardMarkup.setOneTimeKeyboard(true);
 
         return replyKeyboardMarkup;
+    }
+
+    public static InlineKeyboardMarkup deteailDebts(final List<Button> buttons) {
+        final InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        final List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        for (Button button : buttons) {
+            final InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText(button.getName());
+            inlineKeyboardButton.setCallbackData(button.getCallback());
+            keyboardButtonsRow1.add(inlineKeyboardButton);
+        }
+        final List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow1);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        return inlineKeyboardMarkup;
     }
 
 }

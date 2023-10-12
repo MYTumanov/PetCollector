@@ -1,5 +1,7 @@
 package ru.petcollector.petcollector.handler;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,13 +13,18 @@ import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import com.vdurmont.emoji.EmojiParser;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.petcollector.petcollector.api.IDebtService;
 import ru.petcollector.petcollector.api.IUserService;
 import ru.petcollector.petcollector.exception.UserNotFoundException;
+import ru.petcollector.petcollector.keyboard.KeyBoardFactory;
 import ru.petcollector.petcollector.model.AggregateDebt;
+import ru.petcollector.petcollector.model.Button;
 import ru.petcollector.petcollector.model.TelegramDebt;
 import ru.petcollector.petcollector.model.TelegramDebtor;
 import ru.petcollector.petcollector.model.TelegramUser;
@@ -27,6 +34,9 @@ import static ru.petcollector.petcollector.unils.Constans.ADD_DEBT_STATE;
 import static ru.petcollector.petcollector.unils.Constans.UPDATE_ID;
 import static ru.petcollector.petcollector.unils.Constans.TEMP_USER;
 import static ru.petcollector.petcollector.unils.Constans.TEMP_DEBT;
+import static ru.petcollector.petcollector.unils.Constans.DEBT_DETAIL;
+import static ru.petcollector.petcollector.unils.Constans.BACK;
+import static ru.petcollector.petcollector.unils.Constans.REDEEM_DEBT;
 
 @Slf4j
 @Component
@@ -51,14 +61,18 @@ public class DebtHandler extends AbstractHandler {
                 throw new UserNotFoundException();
 
             List<AggregateDebt> debts = debtService.getDebts(userId);
+            List<Button> buttons = new ArrayList<>();
             StringBuilder stringBuilder = new StringBuilder();
             for (AggregateDebt debt : debts) {
                 stringBuilder.append(debt + "\r\n");
+                buttons.add(Button.valueOf("Подробней о " + debt.getName(), DEBT_DETAIL + "_" + debt.getUserId()));
+                log.info("DEBT: " + debt);
             }
 
             final SendMessage message = new SendMessage();
             message.setChatId(ctx.chatId());
             message.setText(stringBuilder.isEmpty() ? "Пусто" : stringBuilder.toString());
+            message.setReplyMarkup(KeyBoardFactory.deteailDebts(buttons));
 
             ctx.bot().silent().execute(message);
         } catch (@NotNull final UserNotFoundException userEx) {
@@ -171,6 +185,41 @@ public class DebtHandler extends AbstractHandler {
             log.error("DebtHandler.addDebt: ", e);
         } finally {
             clearMap(update.getMessage().getChatId());
+        }
+    }
+
+    public void debtDetail(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
+        final String debtorId = update.getCallbackQuery().getData().split("_")[1];
+        try {
+            final String userId = getUserId(update.getCallbackQuery().getFrom().getId());
+            final List<TelegramDebt> debts = debtService
+                    .getDebtsDetail(userId, debtorId);
+            final TelegramUser userDebtor = userService.getUser(debtorId);
+            StringBuilder messageText = new StringBuilder();
+            List<Button> buttons = new ArrayList<>();
+            buttons.add(Button.valueOf("<<", BACK));
+            messageText.append("Подробней о " + userDebtor.getTelegramUserName() + "\r\n");
+            int i = 1;
+            for (TelegramDebt debt : debts) {
+                messageText.append(i + " "
+                        + EmojiParser.parseToUnicode(debt.getStatusEmoji(userId))
+                        + " ");
+                messageText.append(debt.getComment() == null ? ""
+                        : EmojiParser.parseToUnicode(":speech_balloon:") + " " + debt.getComment() + " ");
+                messageText.append(EmojiParser.parseToUnicode(":moneybag:") + " "
+                        + BigDecimal.valueOf(debt.getSum()).toPlainString() + "₽ \r\n");
+                buttons.add(
+                        Button.valueOf(EmojiParser.parseToUnicode(":money_with_wings:") + i, REDEEM_DEBT + "_" + debt.getId()));
+                i++;
+            }
+            final EditMessageText editMessageText = new EditMessageText();
+            editMessageText.setChatId(update.getCallbackQuery().getMessage().getChatId());
+            editMessageText.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+            editMessageText.setText(messageText.toString());
+            editMessageText.setReplyMarkup(KeyBoardFactory.deteailDebts(buttons));
+            bot.silent().execute(editMessageText);
+        } catch (final Exception e) {
+            log.error("DebtHandler.debtDetail ", e);
         }
     }
 

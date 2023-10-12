@@ -2,6 +2,7 @@ package ru.petcollector.petcollector.bot;
 
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.abilitybots.api.objects.ReplyFlow;
 import org.telegram.abilitybots.api.util.AbilityExtension;
 
@@ -48,6 +49,10 @@ public class DebtAbility implements AbilityExtension {
                 .privacy(PUBLIC)
                 .action(debtHandler::cancel)
                 .build();
+    }
+
+    public Reply debtDetailFlow() {
+        return Reply.of(debtHandler::debtDetail, u -> u.getCallbackQuery().getData().startsWith(DEBT_DETAIL));
     }
 
     public ReplyFlow newDebtFlow() {

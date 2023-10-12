@@ -1,5 +1,6 @@
 package ru.petcollector.petcollector.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class AggregateDebt {
 
     @Override
     public String toString() {
-        return "Сумма: '" + getTotalDebt() + "'" +
+        return "Сумма: '" + BigDecimal.valueOf(getTotalDebt()).toPlainString() + "'" +
                 ", Имя: '" + getName() + "'";
     }
 

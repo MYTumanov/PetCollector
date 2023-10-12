@@ -13,11 +13,15 @@ public class Constans {
     public static final String NEW_DEBT_REQUEST_ID = "1";
 
     // Buttons name
-    public static final String NEW_DEBT = "/newDebt";
+    public static final String NEW_DEBT = "+";
 
     // Command names
+    public static final String BACK = "Back";
     public static final String GET_DEBTS = "getdebts";
     public static final String CANCEL_COMMAND = "cancel";
+    public static final String DEBT_DETAIL = "DebtDetails";
+    public static final String CLOSE_DEBT = "Close Debt";
+    public static final String REDEEM_DEBT = "Redeem Debt";
 
     // Command infos
     public static final String GET_DEBT_INFO = "Список задолжностей";

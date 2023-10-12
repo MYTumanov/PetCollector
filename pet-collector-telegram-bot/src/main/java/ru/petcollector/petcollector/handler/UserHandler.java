@@ -43,7 +43,7 @@ public class UserHandler extends AbstractHandler {
         final SendMessage message = new SendMessage();
         message.setChatId(ctx.chatId());
         message.setText("Кто тебе должен?");
-        message.setReplyMarkup(KeyBoardFactory.UserRequestKeyboard());
+        message.setReplyMarkup(KeyBoardFactory.userRequestKeyboard());
 
         ctx.bot().silent().execute(message);
 

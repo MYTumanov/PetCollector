@@ -43,6 +43,8 @@ public class AggregateDebt {
         if (user.getMidleName() != null && !user.getMidleName().isEmpty())
             resultName.append(user.getMidleName() + " ");
         if (resultName.isEmpty())
+            resultName.append(user.getTelegramUserName());
+        if (resultName.isEmpty())
             resultName.append(user.getPhoneNumber());
         return resultName.toString().trim();
     }

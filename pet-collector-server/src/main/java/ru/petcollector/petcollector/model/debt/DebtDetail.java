@@ -3,6 +3,7 @@ package ru.petcollector.petcollector.model.debt;
 import java.util.Date;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -33,6 +34,7 @@ public class DebtDetail {
     @NotNull
     private String debtorId;
 
-    // TODO необходимо добавить поле "КОММЕНТАРИЙ"
-    
+    @Nullable
+    private String comment;
+
 }

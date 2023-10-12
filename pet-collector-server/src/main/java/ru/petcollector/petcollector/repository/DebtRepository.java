@@ -74,11 +74,12 @@ public interface DebtRepository extends AbstractRepository<Debt> {
     @NotNull
     @Aggregation(pipeline = {
             "{$match:{$or : [{$and:[{'ownerId':ObjectId('?1')},{'debtors.userId':ObjectId('?0')},{'isDeleted':false}]}, {$and:[{'ownerId':ObjectId('?0')},{'debtors.userId':ObjectId('?1')},{'isDeleted':false}]}]}}",
-            "{$addFields: { debtors: { $filter: { input: '$debtors', as: 'debtor', cond: { $or : [{$eq: ['$$debtor.userId', ObjectId('?0')]},{$eq: ['$$debtor.userId', ObjectId('?1')]}]}}}}}",
-            "{$project : {ownerId : 1, sum : '$debtors.sum', status : '$debtors.status', created : 1, debtorId : '$debtors.userId'}}",
+            "{$addFields: {comment: '$comment', debtors: { $filter: { input: '$debtors', as: 'debtor', cond: { $or : [{$eq: ['$$debtor.userId', ObjectId('?0')]},{$eq: ['$$debtor.userId', ObjectId('?1')]}]}}}}}",
+            "{$project : {ownerId : 1, sum : '$debtors.sum', status : '$debtors.status', created : 1, debtorId : '$debtors.userId', 'comment': '$comment'}}",
             "{$unwind: '$sum'}",
             "{$unwind: '$status'}",
             "{$unwind: '$debtorId'}",
+            "{$unwind : {path: '$comment', preserveNullAndEmptyArrays: true}}",
             "{$sort : {'created' : -1}}"})
     public Optional<List<DebtDetail>> findByDebtorIdAndUserId(@NotNull final String debtorId, @NotNull final String userId);
 

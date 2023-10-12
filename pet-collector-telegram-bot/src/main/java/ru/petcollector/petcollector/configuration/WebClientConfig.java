@@ -3,8 +3,10 @@ package ru.petcollector.petcollector.configuration;
 import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,10 +20,17 @@ import reactor.netty.http.client.HttpClient;
 
 @Slf4j
 @Configuration
+@PropertySource("classpath:application.properties")
 public class WebClientConfig {
 
+    @Value("${pet.collector.server.host}")
+    private String host;
+
+    @Value("${pet.collector.server.port}")
+    private String port;
+
     @NotNull
-    private static final String BASE_URL = "http://pc-server:8085/api";
+    private String baseUrl;
 
     public static final int TIMEOUT = 1000;
 
@@ -35,8 +44,12 @@ public class WebClientConfig {
                     connection.addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
                 });
 
+        baseUrl = "http://" + host + ":" + port + "/api";
+        log.info("PORT: " + port);
+        log.info("HOST: " + host);
+        log.info("URL: " + baseUrl);
         return WebClient.builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .filter(logRequest())
                 .clientConnector(new ReactorClientHttpConnector(clinet))
                 .build();
