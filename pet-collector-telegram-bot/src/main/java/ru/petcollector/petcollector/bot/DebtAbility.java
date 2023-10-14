@@ -30,17 +30,6 @@ public class DebtAbility implements AbilityExtension {
     }
 
     @NotNull
-    public Ability getDebtCommand() {
-        return Ability.builder()
-                .name(GET_DEBTS)
-                .info(GET_DEBT_INFO)
-                .locality(USER)
-                .privacy(PUBLIC)
-                .action(debtHandler::getDebts)
-                .build();
-    }
-
-    @NotNull
     public Ability cancelDebtCommand() {
         return Ability.builder()
                 .name(CANCEL_COMMAND)
@@ -53,6 +42,15 @@ public class DebtAbility implements AbilityExtension {
 
     public Reply debtDetailFlow() {
         return Reply.of(debtHandler::debtDetail, u -> u.getCallbackQuery().getData().startsWith(DEBT_DETAIL));
+    }
+
+    public Reply getDebtFlow() {
+        return Reply.of(debtHandler::getDebts,
+                u -> u.getMessage().isCommand() && u.getMessage().getText().equals(GET_DEBTS));
+    }
+
+    public Reply backFlow() {
+        return Reply.of(debtHandler::back, u -> u.getCallbackQuery().getData().startsWith(BACK));
     }
 
     public ReplyFlow newDebtFlow() {

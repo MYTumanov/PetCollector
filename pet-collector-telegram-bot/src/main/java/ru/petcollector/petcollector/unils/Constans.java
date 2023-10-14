@@ -17,7 +17,7 @@ public class Constans {
 
     // Command names
     public static final String BACK = "Back";
-    public static final String GET_DEBTS = "getdebts";
+    public static final String GET_DEBTS = "/getdebts";
     public static final String CANCEL_COMMAND = "cancel";
     public static final String DEBT_DETAIL = "DebtDetails";
     public static final String CLOSE_DEBT = "Close Debt";

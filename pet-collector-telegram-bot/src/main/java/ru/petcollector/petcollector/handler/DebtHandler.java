@@ -29,6 +29,7 @@ import ru.petcollector.petcollector.model.TelegramDebt;
 import ru.petcollector.petcollector.model.TelegramDebtor;
 import ru.petcollector.petcollector.model.TelegramUser;
 import ru.petcollector.petcollector.unils.AddDebtState;
+import ru.petcollector.petcollector.unils.GetDebtState;
 
 import static ru.petcollector.petcollector.unils.Constans.ADD_DEBT_STATE;
 import static ru.petcollector.petcollector.unils.Constans.UPDATE_ID;
@@ -75,6 +76,45 @@ public class DebtHandler extends AbstractHandler {
             message.setReplyMarkup(KeyBoardFactory.deteailDebts(buttons));
 
             ctx.bot().silent().execute(message);
+        } catch (@NotNull final UserNotFoundException userEx) {
+            log.error("User not found", userEx);
+        } catch (@NotNull final WebClientException wcEx) {
+            log.error("DebtHandler.getDebts: ", wcEx);
+        }
+    }
+
+    public void getDebts(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
+        try {
+            @Nullable
+            final String userId = getUserId(
+                    update.getMessage() == null ? update.getCallbackQuery().getFrom().getId()
+                            : update.getMessage().getFrom().getId());
+            if (userId == null || userId.isEmpty())
+                throw new UserNotFoundException();
+
+            List<AggregateDebt> debts = debtService.getDebts(userId);
+            List<Button> buttons = new ArrayList<>();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (AggregateDebt debt : debts) {
+                stringBuilder.append(debt + "\r\n");
+                buttons.add(Button.valueOf("Подробней о " + debt.getName(), DEBT_DETAIL + "_" + debt.getUserId()));
+            }
+
+            if (update.hasCallbackQuery()) {
+                final EditMessageText editMessageText = new EditMessageText();
+                editMessageText.setChatId(update.getCallbackQuery().getMessage().getChatId());
+                editMessageText.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+                editMessageText.setText(stringBuilder.isEmpty() ? "Пусто" : stringBuilder.toString());
+                editMessageText.setReplyMarkup(KeyBoardFactory.deteailDebts(buttons));
+                bot.silent().execute(editMessageText);
+            } else {
+                final SendMessage message = new SendMessage();
+                message.setChatId(update.getMessage().getChatId());
+                message.setText(stringBuilder.isEmpty() ? "Пусто" : stringBuilder.toString());
+                message.setReplyMarkup(KeyBoardFactory.deteailDebts(buttons));
+                bot.silent().execute(message);
+            }
+
         } catch (@NotNull final UserNotFoundException userEx) {
             log.error("User not found", userEx);
         } catch (@NotNull final WebClientException wcEx) {
@@ -197,7 +237,7 @@ public class DebtHandler extends AbstractHandler {
             final TelegramUser userDebtor = userService.getUser(debtorId);
             StringBuilder messageText = new StringBuilder();
             List<Button> buttons = new ArrayList<>();
-            buttons.add(Button.valueOf("<<", BACK));
+            buttons.add(Button.valueOf("<<", BACK + "@" + GetDebtState.GET_DEBT));
             messageText.append("Подробней о " + userDebtor.getTelegramUserName() + "\r\n");
             int i = 1;
             for (TelegramDebt debt : debts) {
@@ -209,7 +249,8 @@ public class DebtHandler extends AbstractHandler {
                 messageText.append(EmojiParser.parseToUnicode(":moneybag:") + " "
                         + BigDecimal.valueOf(debt.getSum()).toPlainString() + "₽ \r\n");
                 buttons.add(
-                        Button.valueOf(EmojiParser.parseToUnicode(":money_with_wings:") + i, REDEEM_DEBT + "_" + debt.getId()));
+                        Button.valueOf(EmojiParser.parseToUnicode(":money_with_wings:") + i,
+                                REDEEM_DEBT + "_" + debt.getId()));
                 i++;
             }
             final EditMessageText editMessageText = new EditMessageText();
@@ -221,6 +262,13 @@ public class DebtHandler extends AbstractHandler {
         } catch (final Exception e) {
             log.error("DebtHandler.debtDetail ", e);
         }
+    }
+
+    public void back(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
+        log.info(update.getCallbackQuery().getData());
+        final String state = update.getCallbackQuery().getData().split("@")[1];
+        if (state.equals(GetDebtState.GET_DEBT.toString()))
+            getDebts(bot, update);
     }
 
     private void clearMap(@NotNull final Long chatId) {
