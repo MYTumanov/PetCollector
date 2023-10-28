@@ -30,10 +30,10 @@ public class UserService implements IUserService {
     private String routingkey;
 
     @NotNull
-    private RabbitTemplate rabbiTemplate;
+    private final RabbitTemplate rabbiTemplate;
 
     @NotNull
-    private WebClient webClient;
+    private final WebClient webClient;
 
     public UserService(@NotNull final RabbitTemplate rabbiTemplate, @NotNull final WebClient webClient) {
         this.rabbiTemplate = rabbiTemplate;

@@ -18,4 +18,6 @@ public interface IDebtService {
 
     void createDebt(@NotNull final TelegramDebt debt, @NotNull final String userId);
 
+    void updateDebt(@NotNull final TelegramDebt debt, @NotNull final String userId);
+
 }

@@ -1,6 +1,5 @@
 package ru.petcollector.petcollector.handler;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,35 +53,6 @@ public class DebtHandler extends AbstractHandler {
         this.debtService = debtService;
     }
 
-    public void getDebts(@NotNull final MessageContext ctx) {
-        try {
-            @Nullable
-            final String userId = getUserId(ctx.user().getId());
-            if (userId == null || userId.isEmpty())
-                throw new UserNotFoundException();
-
-            List<AggregateDebt> debts = debtService.getDebts(userId);
-            List<Button> buttons = new ArrayList<>();
-            StringBuilder stringBuilder = new StringBuilder();
-            for (AggregateDebt debt : debts) {
-                stringBuilder.append(debt + "\r\n");
-                buttons.add(Button.valueOf("Подробней о " + debt.getName(), DEBT_DETAIL + "_" + debt.getUserId()));
-                log.info("DEBT: " + debt);
-            }
-
-            final SendMessage message = new SendMessage();
-            message.setChatId(ctx.chatId());
-            message.setText(stringBuilder.isEmpty() ? "Пусто" : stringBuilder.toString());
-            message.setReplyMarkup(KeyBoardFactory.deteailDebts(buttons));
-
-            ctx.bot().silent().execute(message);
-        } catch (@NotNull final UserNotFoundException userEx) {
-            log.error("User not found", userEx);
-        } catch (@NotNull final WebClientException wcEx) {
-            log.error("DebtHandler.getDebts: ", wcEx);
-        }
-    }
-
     public void getDebts(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
         try {
             @Nullable
@@ -96,8 +66,8 @@ public class DebtHandler extends AbstractHandler {
             List<Button> buttons = new ArrayList<>();
             StringBuilder stringBuilder = new StringBuilder();
             for (AggregateDebt debt : debts) {
-                stringBuilder.append(debt + "\r\n");
-                buttons.add(Button.valueOf("Подробней о " + debt.getName(), DEBT_DETAIL + "_" + debt.getUserId()));
+                stringBuilder.append(EmojiParser.parseToUnicode(debt.toString()) + "\r\n");
+                buttons.add(Button.valueOf("Подробней о " + debt.getName(), DEBT_DETAIL + "@" + debt.getUserId()));
             }
 
             if (update.hasCallbackQuery()) {
@@ -229,7 +199,7 @@ public class DebtHandler extends AbstractHandler {
     }
 
     public void debtDetail(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
-        final String debtorId = update.getCallbackQuery().getData().split("_")[1];
+        final String debtorId = update.getCallbackQuery().getData().split("@")[1];
         try {
             final String userId = getUserId(update.getCallbackQuery().getFrom().getId());
             final List<TelegramDebt> debts = debtService
@@ -247,10 +217,10 @@ public class DebtHandler extends AbstractHandler {
                 messageText.append(debt.getComment() == null ? ""
                         : EmojiParser.parseToUnicode(":speech_balloon:") + " " + debt.getComment() + " ");
                 messageText.append(EmojiParser.parseToUnicode(":moneybag:") + " "
-                        + BigDecimal.valueOf(debt.getSum()).toPlainString() + "₽ \r\n");
+                        + String.format("%.2f", debt.getSum()) + "₽ \r\n");
                 buttons.add(
                         Button.valueOf(EmojiParser.parseToUnicode(":money_with_wings:") + i,
-                                REDEEM_DEBT + "_" + debt.getId()));
+                                REDEEM_DEBT + "@" + debtorId + "@" + debt.getId()));
                 i++;
             }
             final EditMessageText editMessageText = new EditMessageText();
@@ -269,6 +239,25 @@ public class DebtHandler extends AbstractHandler {
         final String state = update.getCallbackQuery().getData().split("@")[1];
         if (state.equals(GetDebtState.GET_DEBT.toString()))
             getDebts(bot, update);
+    }
+
+    public void debtClose(@NotNull final BaseAbilityBot bot, @NotNull final Update update) {
+        try {
+            final String debtId = update.getCallbackQuery().getData().split("@")[1];
+            final String debtorId = update.getCallbackQuery().getData().split("@")[2];
+            final String userId = getUserId(update.getCallbackQuery().getFrom().getId());
+            final TelegramDebt debt = new TelegramDebt();
+            final TelegramDebtor debtor = new TelegramDebtor();
+            debtor.setUserId(debtorId);
+            debtor.setStatus("PAID");
+            debt.setId(debtId);
+            debt.setStatus("PAID");
+            debt.getDebtors().add(debtor);
+            debtService.updateDebt(debt, userId);
+            debtDetail(bot, update);
+        } catch (final Exception e) {
+            log.error("DebtHandler.debtClose ", e);
+        }
     }
 
     private void clearMap(@NotNull final Long chatId) {

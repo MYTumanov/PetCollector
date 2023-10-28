@@ -22,5 +22,9 @@ public class TelegramUser implements Serializable {
 
     @Nullable
     private String telegramUserName;
+
+    public String getTelegramUserName() {
+        return "@" + telegramUserName;
+    }
     
 }

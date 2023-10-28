@@ -29,8 +29,7 @@ public class AggregateDebt {
 
     @Override
     public String toString() {
-        return "Сумма: '" + BigDecimal.valueOf(getTotalDebt()).toPlainString() + "'" +
-                ", Имя: '" + getName() + "'";
+        return ":moneybag: " + BigDecimal.valueOf(getTotalDebt()).toPlainString() + "₽ :person_frowning: " + getName();
     }
 
 }

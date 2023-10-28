@@ -22,7 +22,7 @@ public class DebtService implements IDebtService {
     private static final String USERID = "userId";
 
     @NotNull
-    private WebClient webClient;
+    private final WebClient webClient;
 
     public DebtService(@NotNull final WebClient webClient) {
         this.webClient = webClient;
@@ -59,7 +59,7 @@ public class DebtService implements IDebtService {
 
     @Nullable
     @Override
-    public List<TelegramDebt> getDebtsDetail(@NotNull String userId, @NotNull String debtorId) {
+    public List<TelegramDebt> getDebtsDetail(@NotNull final String userId, @NotNull final String debtorId) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/debt/debtorid/" + debtorId)
@@ -68,6 +68,20 @@ public class DebtService implements IDebtService {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<TelegramDebt>>() {
                 })
+                .block();
+    }
+
+    @Override
+    public void updateDebt(@NotNull final TelegramDebt debt, @NotNull final String userId) {
+        webClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/debt/" + debt.getId())
+                        .queryParam(USERID, userId)
+                        .build())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(debt)
+                .retrieve()
+                .bodyToMono(String.class)
                 .block();
     }
 

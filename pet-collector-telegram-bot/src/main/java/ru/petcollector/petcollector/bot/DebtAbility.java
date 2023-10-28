@@ -53,6 +53,10 @@ public class DebtAbility implements AbilityExtension {
         return Reply.of(debtHandler::back, u -> u.getCallbackQuery().getData().startsWith(BACK));
     }
 
+    public Reply redeemFlow() {
+        return Reply.of(debtHandler::debtClose, u -> u.getCallbackQuery().getData().startsWith(REDEEM_DEBT));
+    }
+
     public ReplyFlow newDebtFlow() {
         @NotNull
         final ReplyFlow addDebt = ReplyFlow.builder(db).action(debtHandler::addDebt)

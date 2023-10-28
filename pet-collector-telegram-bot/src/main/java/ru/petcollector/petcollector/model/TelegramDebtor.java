@@ -18,6 +18,9 @@ public class TelegramDebtor implements Serializable {
     private String userId;
 
     @Nullable
+    private String status;
+
+    @Nullable
     private Float sum;
 
     @Override
