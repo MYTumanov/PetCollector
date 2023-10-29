@@ -17,7 +17,6 @@ public interface DebtMapper {
     @NotNull
     public static Debt map(@NotNull final DebtDTO debtDTO, @NotNull final Debt debt)
             throws InvalidEntityParamentException {
-        debt.setStatus(debtDTO.getStatus().orElse(debt.getStatus()));
         debt.setComment(debtDTO.getComment().orElse(debt.getComment()));
         debt.setVersion(debtDTO.getVersion().orElse(debt.getVersion()));
 
@@ -43,11 +42,10 @@ public interface DebtMapper {
     private static Debtor map(@NotNull final Debtor to, @NotNull final DebtorDTO from)
             throws InvalidEntityParamentException {
         to.setStatus(from.getStatus().orElse(to.getStatus()));
-        to.setPhoneNumber(from.getPhoneNumber().orElse(to.getPhoneNumber()));
         to.setSum(from.getSum().orElse(to.getSum()));
-        if (to.getUserId().isEmpty()) {
-            to.setUserId(from.getUserId().orElseThrow(InvalidEntityParamentException::new));
-        }
+        // if (to.getUserId().isEmpty()) {
+        //     to.setUserId(from.getUserId().orElseThrow(InvalidEntityParamentException::new));
+        // }
         return to;
     }
 

@@ -47,7 +47,7 @@ public class UserRegisterService extends UserService {
                 @NotNull
                 final User user = findByTelegramId(input.getUserTelegramId());
                 userDTO.setVersion(Optional.of(user.getVersion()));
-                userDTO.setId(Optional.of(user.getId()));
+                //userDTO.setId(Optional.of(user.getId()));
             } catch (@NotNull final EntityNotFoundException e) {
                 userDTO.setLogin(Optional.of(input.getTelegramUserName()));
                 create(userDTO);

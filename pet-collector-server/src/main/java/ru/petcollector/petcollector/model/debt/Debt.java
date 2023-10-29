@@ -5,10 +5,11 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.ReadOnlyProperty;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.mongodb.core.mapping.FieldType;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import ru.petcollector.petcollector.enumerated.DebtStatus;
@@ -17,20 +18,19 @@ import ru.petcollector.petcollector.model.debtor.Debtor;
 
 @Getter
 @Setter
-@Document("debts")
+@Entity
+@Table(name = "debt")
 public class Debt extends AbstractModel {
 
     @Nullable
     private String comment;
 
     @NotNull
-    @Field(targetType = FieldType.OBJECT_ID)
     private String ownerId;
 
     @NotNull
-    private DebtStatus status = DebtStatus.IN_PROCCESS;
-
-    @NotNull
+    @OneToMany
+    @JoinColumn(name = "debt_id")
     private List<Debtor> debtors = new ArrayList<>();
 
     @NotNull
@@ -41,6 +41,19 @@ public class Debt extends AbstractModel {
             sum += debtor.getSum();
         }
         return sum;
+    }
+
+    @Nullable
+    @ReadOnlyProperty
+    public DebtStatus getStatus() {
+        for(Debtor debtor : debtors) {
+            if (debtor.getStatus() == DebtStatus.IN_PROCCESS) {
+                return DebtStatus.IN_PROCCESS;
+            } else {
+                return DebtStatus.PAID;
+            }
+        }
+        return null;
     }
 
 }

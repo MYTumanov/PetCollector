@@ -1,37 +1,40 @@
 package ru.petcollector.petcollector.model.user;
 
-import org.jetbrains.annotations.Nullable;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.petcollector.petcollector.model.AbstractModel;
 
 @Getter
 @Setter
-@Document("users")
+@Entity
+@Table(name = "users")
 @NoArgsConstructor
-public class User extends AbstractTelegramUser {
+@NamedEntityGraph(name = "user-extuser-graph", attributeNodes = {
+        @NamedAttributeNode("telegramUser"),
+        @NamedAttributeNode("webUser") })
+public class User extends AbstractModel {
 
-    @Nullable
-    private String lastName;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private TelegramUser telegramUser;
 
-    @Nullable
-    private String firstName;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private WebUser webUser;
 
-    @Nullable
-    private String midleName;
+    public void setTelegramUser(final TelegramUser telegramUser) {
+        this.telegramUser = telegramUser;
+        telegramUser.setUser(this);
+    }
 
-    @Nullable
-    private String phoneNumber;
-
-    @Nullable
-    private String login;
-
-    @Nullable
-    @JsonIgnore
-    private String password;
+    public void setTelegramUser(final WebUser webUser) {
+        this.webUser = webUser;
+        webUser.setUser(this);
+    }
 
 }

@@ -88,7 +88,8 @@ public class UserApi {
             return ResponseEntity.ok(service.updateById(userId, userDTO));
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (@NotNull final Exception e) {
+        } 
+        catch (@NotNull final Exception e) {
             log.log(Level.SEVERE, userId, e);
             return ResponseEntity.internalServerError().build();
         }

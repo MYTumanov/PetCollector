@@ -1,5 +1,6 @@
 package ru.petcollector.petcollector.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
     public List<AggregateDebt> findAllByUserId(@Nullable final String userId) {
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException();
-        return repository.findAllByDebtorUserId(userId);
+        return new ArrayList<>();//repository.findAllByDebtorUserId(userId);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
             throw new IllegalArgumentException();
         if (debtorId == null || debtorId.isEmpty())
             throw new IllegalArgumentException();
-        return repository.findByDebtorIdAndUserId(debtorId, userId).orElseThrow(EntityNotFoundException::new);
+        return new ArrayList<>();//repository.findByDebtorIdAndUserId(debtorId, userId).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
         DebtStatus[] debtStatuses = new DebtStatus[statuses.length];
         for (int i = 0; i < statuses.length; i++)
             debtStatuses[i] = DebtStatus.toStatus(statuses[i]);
-        return repository.findAllByUserIdAndStatuses(userId, debtStatuses);
+        return new ArrayList<>();//repository.findAllByUserIdAndStatuses(userId, debtStatuses);
     }
 
     @Override
@@ -66,8 +67,8 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
             throw new IllegalArgumentException();
         @NotNull
         final Debt debt = DebtMapper.map(debtDTO,
-                repository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new));
-        debt.setId(id);
+                repository.findByIdAndOwnerId(id, userId).orElseThrow(EntityNotFoundException::new));
+       debt.setId(id);
         debt.setOwnerId(userId);
         return repository.save(debt);
     }
@@ -84,7 +85,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
         final Debt debt = DebtMapper.map(debtDTO, new Debt());
         debt.setOwnerId(userId);
         log.info("Debt version" + debt.getVersion());
-        return repository.insert(debt);
+        return repository.save(debt);
     }
 
     @Override
@@ -95,7 +96,7 @@ public class DebtService extends AbstractService<Debt, DebtRepository> implement
         if (id == null || id.isEmpty())
             throw new IllegalArgumentException();
         @NotNull
-        final Debt debt = repository.findByIdAndUserId(id, userId).orElseThrow(EntityNotFoundException::new);
+        final Debt debt = repository.findByIdAndOwnerId(id, userId).orElseThrow(EntityNotFoundException::new);
         debt.setDeleted(true);
         repository.save(debt);
     }

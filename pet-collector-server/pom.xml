@@ -34,11 +34,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-			<version>3.0.1</version>
-		</dependency>
-		<dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>23.0.0</version>
@@ -59,6 +54,15 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
 			<version>3.0.3</version>
         </dependency>
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.6.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -89,6 +93,19 @@
     			<groupId>org.springframework.boot</groupId>
       			<artifactId>spring-boot-maven-plugin</artifactId>
     		</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>9.22.3</version>
+				<configuration>
+					<user>pet_collector</user>
+					<password>pet_collector</password>
+					<url>jdbc:postgresql://localhost:5432/pet_collector_db</url>                                  
+					<locations>
+						<location>filesystem:/database/script/</location>
+					</locations> 
+				</configuration>
+			</plugin>
 		</plugins>
   	</build>
 

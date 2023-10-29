@@ -21,7 +21,7 @@ public class UserService extends AbstractService<User, UserRepository> implement
     public boolean existsByLogin(@Nullable final String login) throws IllegalArgumentException {
         if (login == null || login.isEmpty())
             throw new IllegalArgumentException("login");
-        return repository.existsByLogin(login);
+        return repository.existsByWebUser_Login(login);
     }
 
     @NotNull
@@ -32,7 +32,7 @@ public class UserService extends AbstractService<User, UserRepository> implement
         userDTO.setVersion(Optional.of(0d));
         @NotNull
         final User user = UserMapper.map(userDTO, new User());
-        return repository.insert(user);
+        return repository.save(user);
     }
 
     @NotNull
@@ -53,7 +53,7 @@ public class UserService extends AbstractService<User, UserRepository> implement
     public User findByPhoneNumber(@Nullable final String phoneNumber) throws IllegalArgumentException {
         if (phoneNumber == null || phoneNumber.isEmpty())
             throw new IllegalArgumentException("phoneNumber");
-        return repository.findByPhoneNumber(phoneNumber).orElse(null);
+        return repository.findByWebUser_PhoneNumber(phoneNumber).orElse(null);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class UserService extends AbstractService<User, UserRepository> implement
             throws IllegalArgumentException, EntityNotFoundException {
         if (telegramId == null)
             throw new IllegalArgumentException("telegramId");
-        return repository.findByUserTelegramId(telegramId).orElseThrow(() -> new EntityNotFoundException());
+        return repository.findByTelegramUser_UserTelegramId(telegramId).orElseThrow(EntityNotFoundException::new);
     }
 
 }
