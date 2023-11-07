@@ -22,7 +22,6 @@ import ru.petcollector.petcollector.exception.EntityNotFoundException;
 import ru.petcollector.petcollector.model.debt.AggregateDebt;
 import ru.petcollector.petcollector.model.debt.Debt;
 import ru.petcollector.petcollector.model.debt.DebtDTO;
-import ru.petcollector.petcollector.model.debt.DebtDetail;
 
 @RestController
 @RequestMapping(path = "api/debt")
@@ -37,11 +36,11 @@ public class DebtApi {
     // Задолжности могут быть адресованы в обе стороны:
     // Пользователь1 <--> Пользователь2
     @GetMapping("debtorid/{id}")
-    public ResponseEntity<List<DebtDetail>> getDebtsDetail(@PathVariable("id") @NotNull final String debtorId,
+    public ResponseEntity<List<Debt>> getDebtsDetail(@PathVariable("id") @NotNull final String debtorId,
             @RequestParam("userId") @NotNull final String userId) {
         try {
             @NotNull
-            final List<DebtDetail> debts = service.findByDebtorIdAndUserId(debtorId, userId);
+            final List<Debt> debts = service.findByDebtorIdAndUserId(debtorId, userId);
             return ResponseEntity.ok(debts);
         } catch (@NotNull final EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -57,7 +56,8 @@ public class DebtApi {
     @GetMapping
     public ResponseEntity<List<AggregateDebt>> getDebts(@RequestParam("userId") @NotNull final String userId) {
         try {
-            return ResponseEntity.ok(service.findAllByUserId(userId));
+            List<AggregateDebt> aggDebts = service.findAllByUserId(userId);
+            return ResponseEntity.ok(aggDebts);
         } catch (@NotNull final Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

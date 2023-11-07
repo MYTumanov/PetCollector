@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public enum DebtStatus {
 
-    IN_PROCCESS("In proccess"),
+    IN_PROCESS("In process"),
     PAID("Paid"),
     CANCELED("Canceled"),
     DECLAINED("Declained");

@@ -2,10 +2,12 @@ package ru.petcollector.petcollector.model.debt;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -29,8 +31,8 @@ public class Debt extends AbstractModel {
     private String ownerId;
 
     @NotNull
-    @OneToMany
-    @JoinColumn(name = "debt_id")
+    @JoinColumn(name = "debtId")
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Debtor> debtors = new ArrayList<>();
 
     @NotNull
@@ -46,9 +48,9 @@ public class Debt extends AbstractModel {
     @Nullable
     @ReadOnlyProperty
     public DebtStatus getStatus() {
-        for(Debtor debtor : debtors) {
-            if (debtor.getStatus() == DebtStatus.IN_PROCCESS) {
-                return DebtStatus.IN_PROCCESS;
+        for (Debtor debtor : debtors) {
+            if (debtor.getStatus() == DebtStatus.IN_PROCESS) {
+                return DebtStatus.IN_PROCESS;
             } else {
                 return DebtStatus.PAID;
             }

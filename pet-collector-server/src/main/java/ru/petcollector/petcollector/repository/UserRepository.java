@@ -22,6 +22,10 @@ public interface UserRepository extends AbstractRepository<User> {
 
     @NotNull
     @EntityGraph(type = EntityGraphType.FETCH, value = "user-extuser-graph")
+    Optional<User> findById(final String id);
+
+    @NotNull
+    @EntityGraph(type = EntityGraphType.FETCH, value = "user-extuser-graph")
     List<User> findAll();
-    
+
 }

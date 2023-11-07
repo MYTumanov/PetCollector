@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.petcollector.petcollector.model.AbstractModel;
-
 @Getter
 @Setter
 @Entity
